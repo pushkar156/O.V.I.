@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from core.config import settings
+from core.api import chat, voice, websocket, devices, memory
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -28,6 +29,13 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan
 )
+
+# Mount Routers
+app.include_router(chat.router)
+app.include_router(voice.router)
+app.include_router(websocket.router)
+app.include_router(devices.router)
+app.include_router(memory.router)
 
 # CORS Middleware
 app.add_middleware(
