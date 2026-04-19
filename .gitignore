@@ -1,2 +1,58 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Data & Databases
+data/
+*.db
+*.db-journal
+chroma_db/
+
+# Environment
+.env
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Dashboard/Mobile
+dashboard/.next/
+dashboard/node_modules/
+mobile/node_modules/
+mobile/dist/
+
+# Misc
 PLAN.tldr
 Implementation.md
