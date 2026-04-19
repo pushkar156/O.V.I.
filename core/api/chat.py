@@ -7,12 +7,13 @@ from core.llm.ollama_client import ollama_client
 from core.llm.prompt_builder import prompt_builder
 from core.llm.tool_router import tool_router
 from core.tools import get_tool_definitions
+from core.memory.short_term import memory_manager
 
 router = APIRouter(prefix="/api/chat", tags=["Chat"])
 
 class ChatRequest(BaseModel):
     message: str
-    conversation_id: Optional[str] = None
+    conversation_id: Optional[str] = "default-session"
     context: Optional[Dict[str, Any]] = None
 
 class ToolUsage(BaseModel):
@@ -33,25 +34,30 @@ async def chat_endpoint(request: ChatRequest):
     Processes intent, executes tools, and returns a natural language response.
     """
     logger.info(f"Received chat request: {request.message}")
+    conv_id = request.conversation_id or "default-session"
     
     # 1. Prepare context and instructions
     tool_defs = get_tool_definitions()
     system_prompt = prompt_builder.build_system_prompt(tools=tool_defs, context=request.context)
     
-    messages = [
-        {"role": "system", "content": system_prompt},
-        # TODO: Load actual conversation history from memory in Phase 5
-        {"role": "user", "content": request.message}
-    ]
+    # 2. Load History
+    history = await memory_manager.get_history(conv_id)
+    
+    messages = [{"role": "system", "content": system_prompt}]
+    messages.extend(history)
+    messages.append({"role": "user", "content": request.message})
+    
+    # 3. Persist User Message
+    await memory_manager.add_message(conv_id, "user", request.message)
     
     tools_used = []
     
     try:
-        # 2. First Pass: Get intent from LLM
+        # 4. First Pass: Get intent from LLM
         response_msg = await ollama_client.chat(messages)
         content = response_msg.get("content", "")
         
-        # 3. Handle Tool Calls
+        # 5. Handle Tool Calls
         tool_name, tool_result = await tool_router.parse_and_route(content)
         
         if tool_name:
@@ -60,12 +66,12 @@ async def chat_endpoint(request: ChatRequest):
             # Record tool usage
             tools_used.append(ToolUsage(
                 name=tool_name,
-                args={}, # Arguments can be extracted if needed for logging
+                args={}, 
                 success=tool_result.success if hasattr(tool_result, 'success') else True,
                 result=tool_result
             ))
             
-            # 4. Second Pass: Feed tool result back to LLM for final response
+            # 6. Second Pass: Feed tool result back to LLM for final response
             messages.append({"role": "assistant", "content": content})
             messages.append({
                 "role": "system", 
@@ -75,10 +81,13 @@ async def chat_endpoint(request: ChatRequest):
             final_response = await ollama_client.chat(messages)
             content = final_response.get("content", "")
 
+        # 7. Persist Assistant Response
+        await memory_manager.add_message(conv_id, "assistant", content)
+
         return ChatResponse(
             response=content,
             tools_used=tools_used,
-            conversation_id=request.conversation_id or "default-session"
+            conversation_id=conv_id
         )
         
     except Exception as e:

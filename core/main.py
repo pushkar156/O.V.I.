@@ -9,13 +9,17 @@ from core.api import chat, voice, websocket, devices, memory
 from core.llm.ollama_client import ollama_client
 from core.llm.tool_router import tool_router
 from core.tools import ALL_TOOLS
+from core.memory.database import init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup logic
     logger.info("Initializing O.V.I. Core Systems...")
     
-    # 1. Check Ollama Health
+    # 1. Initialize Database
+    await init_db()
+    
+    # 2. Check Ollama Health
     ollama_healthy = await ollama_client.check_health()
     if not ollama_healthy:
         logger.error("Ollama connection failed or model not found. Check if Ollama is running.")
