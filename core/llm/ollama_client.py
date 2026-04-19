@@ -15,15 +15,32 @@ class OllamaClient:
     async def check_health(self) -> bool:
         """Verify Ollama is reachable and the model is loaded/available."""
         try:
-            # Check if we can connect
+            # Get available models
             models_info = await self.client.list()
-            available_models = [m['name'] for m in models_info.get('models', [])]
             
-            if self.model not in available_models and f"{self.model}:latest" not in available_models:
-                logger.warning(f"Model '{self.model}' not found in Ollama. Available: {available_models}")
-                return False
+            # Extract names safely - works with both dicts and objects
+            available_names = []
+            if hasattr(models_info, 'models'):
+                # It's an object with a models attribute
+                for m in models_info.models:
+                    available_names.append(getattr(m, 'model', getattr(m, 'name', '')))
+            elif isinstance(models_info, dict):
+                # It's a dictionary
+                for m in models_info.get('models', []):
+                    if isinstance(m, dict):
+                        available_names.append(m.get('model', m.get('name', '')))
+                    else:
+                        available_names.append(getattr(m, 'model', getattr(m, 'name', '')))
+            
+            logger.info(f"Available models: {available_names}")
+            
+            # Check for exact match or :latest tag
+            if self.model in available_names or f"{self.model}:latest" in available_names:
+                return True
                 
-            return True
+            logger.warning(f"Model '{self.model}' not found. You may need to run 'ollama pull {self.model}'")
+            return False
+            
         except Exception as e:
             logger.error(f"Ollama health check failed: {e}")
             return False
