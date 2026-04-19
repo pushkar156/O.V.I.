@@ -6,17 +6,27 @@ from loguru import logger
 
 from core.config import settings
 from core.api import chat, voice, websocket, devices, memory
+from core.llm.ollama_client import ollama_client
+from core.llm.tool_router import tool_router
+from core.tools import ALL_TOOLS
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup logic
     logger.info("Initializing O.V.I. Core Systems...")
-    logger.info(f"Using Model: {settings.DEFAULT_MODEL}")
-    logger.info(f"Ollama URL: {settings.OLLAMA_URL}")
     
-    # TODO: Initialize Ollama Connection
+    # 1. Check Ollama Health
+    ollama_healthy = await ollama_client.check_health()
+    if not ollama_healthy:
+        logger.error("Ollama connection failed or model not found. Check if Ollama is running.")
+    else:
+        logger.info(f"Ollama connected. Model: {settings.DEFAULT_MODEL}")
+    
+    # 2. Register Tools
+    for tool in ALL_TOOLS:
+        tool_router.register_tool(tool.name, tool.execute)
+    
     # TODO: Initialize Memory Store
-    # TODO: Register Tools
     
     logger.info("O.V.I. Core Systems Online.")
     yield
