@@ -13,11 +13,13 @@ chromadb>=0.5.0
 sqlalchemy>=2.0.0
 aiosqlite>=0.20.0
 
-# Voice (Phase 2)
-faster-whisper>=1.0.0
-sounddevice>=0.5.0
-numpy>=1.26.0
+# Voice Stack
+torch
+faster-whisper
+openwakeword
+sounddevice
 edge-tts>=6.1.0
+numpy>=1.26.0
 
 # Desktop Automation
 pyautogui>=0.9.54
