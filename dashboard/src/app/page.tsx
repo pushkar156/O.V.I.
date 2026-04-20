@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Activity, 
   MessageSquare, 
@@ -12,9 +12,20 @@ import { SystemHUD } from "@/components/SystemHUD";
 import { VoiceOrb } from "@/components/VoiceOrb";
 import { OVIChat } from "@/components/OVIChat";
 import { DeviceStatus } from "@/components/DeviceStatus";
+import { oviClient } from "@/lib/ovi-client";
 
 export default function DashboardPage() {
   const [isListening, setIsListening] = useState(false);
+  const [systemStats, setSystemStats] = useState<any>(null);
+
+  useEffect(() => {
+    // Listen for real-time telemetry from O.V.I.
+    oviClient.onMessage((data) => {
+      if (data.type === "stats") {
+        setSystemStats(data.payload);
+      }
+    });
+  }, []);
 
   return (
     <main className="flex h-screen w-full overflow-hidden bg-cosmic">
@@ -60,7 +71,7 @@ export default function DashboardPage() {
         <div className="flex flex-1 gap-8 relative overflow-hidden">
           {/* Left Column: Vision & Action */}
           <div className="flex-[2] flex flex-col items-center justify-center relative">
-            <VoiceOrb isListening={isListening} />
+            <VoiceOrb state={isListening ? "listening" : "idle"} />
             <p className="mt-12 text-white/40 font-mono text-xs tracking-[0.3em] uppercase">
               {isListening ? "Listening for command..." : "Awaiting Wake Word"}
             </p>
