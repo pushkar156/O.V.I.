@@ -13,6 +13,7 @@ import { VoiceOrb } from "@/components/VoiceOrb";
 import { OVIChat } from "@/components/OVIChat";
 import { DeviceStatus } from "@/components/DeviceStatus";
 import { oviClient } from "@/lib/ovi-client";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const [isListening, setIsListening] = useState(false);
@@ -36,12 +37,12 @@ export default function DashboardPage() {
         </div>
         
         <nav className="flex flex-col gap-6 text-white/50">
-          <button className="p-3 rounded-lg hover:bg-white/10 hover:text-primary transition-all">
+          <Link href="/" className="p-3 rounded-lg hover:bg-white/10 hover:text-primary transition-all">
             <Grid size={24} />
-          </button>
-          <button className="p-3 rounded-lg hover:bg-white/10 hover:text-primary transition-all">
+          </Link>
+          <Link href="/memory" className="p-3 rounded-lg hover:bg-white/10 hover:text-primary transition-all">
             <MessageSquare size={24} />
-          </button>
+          </Link>
           <button className="p-3 rounded-lg hover:bg-white/10 hover:text-primary transition-all">
             <Cpu size={24} />
           </button>
