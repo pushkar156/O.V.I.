@@ -32,12 +32,26 @@ class ConnectionManager:
 
     async def broadcast(self, message: dict):
         for connection in self.active_connections:
-            await connection.send_json(message)
+            try:
+                await connection.send_json(message)
+            except Exception:
+                # Connection might be stale
+                pass
+
+    async def broadcast_stats(self):
+        """Fetches and broadcasts real-time system stats."""
+        from core.api.devices import get_system_stats
+        if not self.active_connections:
+            return
+            
+        stats = await get_system_stats()
+        await self.broadcast({"type": "stats", "payload": stats})
 
 manager = ConnectionManager()
 
-@router.websocket("")
-async def websocket_endpoint(websocket: WebSocket, device_id: str = "browser"):
+@router.websocket("/dashboard")
+async def websocket_dashboard(websocket: WebSocket):
+    device_id = "dashboard"
     await manager.connect(websocket, device_id)
     try:
         while True:

@@ -30,7 +30,14 @@ async def lifespan(app: FastAPI):
     for tool in ALL_TOOLS:
         tool_router.register_tool(tool.name, tool.execute)
     
-    # TODO: Initialize Memory Store
+    # 3. Start Telemetry Heartbeat
+    import asyncio
+    async def telemetry_heartbeat():
+        while True:
+            await asyncio.sleep(2)
+            await websocket.manager.broadcast_stats()
+            
+    asyncio.create_task(telemetry_heartbeat())
     
     logger.info("O.V.I. Core Systems Online.")
     yield
