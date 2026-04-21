@@ -6,37 +6,63 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        background: "#0A0F1E", // Deep space blue
-        surface: "#111417",
-        primary: {
-          DEFAULT: "#00E5FF", // Neon Cyan
-          glow: "rgba(0, 229, 255, 0.4)",
-        },
-        secondary: {
-          DEFAULT: "#9D50FF", // Pulse Indigo
-          glow: "rgba(157, 80, 255, 0.4)",
-        },
-        accent: "#64FFDA", // Tertiary Mint
+        "on-background": "#410005",
+        "error": "#ba1a1a",
+        "on-secondary-container": "#762025",
+        "primary-fixed-dim": "#c7c8af",
+        "surface-variant": "#ffdad7",
+        "on-error": "#ffffff",
+        "outline": "#717785",
+        "on-tertiary-fixed-variant": "#852126",
+        "outline-variant": "#c1c6d5",
+        "on-surface": "#410005",
+        "surface-dim": "#ffcfcb",
+        "tertiary-fixed-dim": "#ffb3b0",
+        "primary-container": "#747660",
+        "secondary-fixed-dim": "#ffb3b1",
+        "on-primary-fixed-variant": "#464835",
+        "on-primary": "#ffffff",
+        "on-tertiary": "#ffffff",
+        "inverse-surface": "#660510",
+        "tertiary-fixed": "#ffdad8",
+        "surface-container-low": "#fff0ef",
+        "secondary-fixed": "#ffdad8",
+        "on-surface-variant": "#414753",
+        "surface-container-high": "#ffe1df",
+        "secondary": "#9f3f41",
+        "surface-bright": "#fff8f7",
+        "on-primary-fixed": "#1b1d0c",
+        "tertiary-container": "#c34e4f",
+        "surface-container-highest": "#ffdad7",
+        "surface-container-lowest": "#ffffff",
+        "on-secondary": "#ffffff",
+        "secondary-container": "#ff8988",
+        "surface-container": "#ffe9e7",
+        "background": "#fff8f7",
+        "on-primary-container": "#fefee3",
+        "primary": "#5b5e49",
+        "on-secondary-fixed-variant": "#80282b",
+        "surface": "#fff8f7",
+        "inverse-on-surface": "#ffedeb",
+        "on-tertiary-container": "#fffbff",
+        "tertiary": "#a23638",
+        "primary-fixed": "#e3e4ca",
+        "on-tertiary-fixed": "#410006",
+        "on-error-container": "#93000a",
+        "inverse-primary": "#c7c8af",
+        "on-secondary-fixed": "#410007",
+        "surface-tint": "#5e604b",
+        "error-container": "#ffdad6"
       },
-      backgroundImage: {
-        "glass-gradient": "linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-        "hologram-pulse": "radial-gradient(circle, var(--tw-gradient-stops))",
-      },
-      backdropBlur: {
-        xs: "2px",
-      },
-      animation: {
-        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'glow-cyan': 'glowCyan 2s ease-in-out infinite alternate',
-      },
-      keyframes: {
-        glowCyan: {
-          '0%': { boxShadow: '0 0 5px rgba(0, 229, 255, 0.2), 0 0 10px rgba(0, 229, 255, 0.1)' },
-          '100%': { boxShadow: '0 0 20px rgba(0, 229, 255, 0.6), 0 0 40px rgba(0, 229, 255, 0.3)' },
-        }
+      fontFamily: {
+        "headline": ["Sora"],
+        "body": ["IBM Plex Sans"],
+        "label": ["Lexend"],
+        "display": ["Public Sans"]
       }
     },
   },
