@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { SystemHUD } from "@/components/SystemHUD";
+import { OVIChat } from "@/components/OVIChat";
 
 export default function DashboardPage() {
   return (
@@ -63,38 +65,7 @@ export default function DashboardPage() {
 
       <main className="ml-64 p-8 h-[calc(100vh-64px)] flex gap-8">
         <div className="flex-1 flex flex-col gap-6">
-          <section className="flex-1 bg-surface-container-lowest rounded-2xl border border-[#AF3E3E]/5 flex flex-col items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 50% 50%, #CD5656 0%, transparent 70%)" }}></div>
-            <div className="z-10 text-center">
-              <div className="mb-6 inline-flex p-4 rounded-full bg-[#CD5656]/5 text-[#CD5656] animate-pulse">
-                <span className="material-symbols-outlined text-5xl">mic</span>
-              </div>
-              <h3 className="font-headline text-3xl font-bold text-on-surface mb-2">How can I help you today?</h3>
-              <p className="font-label text-sm text-on-surface-variant">System listening for operational directives...</p>
-            </div>
-
-            <div className="absolute bottom-32 w-full h-24 opacity-30 flex items-center justify-center gap-1">
-              <div className="w-1.5 bg-[#CD5656] rounded-full h-8"></div>
-              <div className="w-1.5 bg-[#CD5656] rounded-full h-16"></div>
-              <div className="w-1.5 bg-[#CD5656] rounded-full h-24"></div>
-              <div className="w-1.5 bg-[#CD5656] rounded-full h-12"></div>
-              <div className="w-1.5 bg-[#CD5656] rounded-full h-32"></div>
-              <div className="w-1.5 bg-[#CD5656] rounded-full h-18"></div>
-              <div className="w-1.5 bg-[#CD5656] rounded-full h-12"></div>
-            </div>
-
-            <div className="absolute bottom-8 left-8 right-8">
-              <div className="bg-surface-container rounded-xl p-2 flex items-center gap-4 shadow-xl border border-[#AF3E3E]/10">
-                <button className="p-2 text-[#CD5656] hover:bg-surface-variant rounded-lg transition-colors">
-                  <span className="material-symbols-outlined">attach_file</span>
-                </button>
-                <input className="flex-1 bg-transparent border-none outline-none focus:ring-0 font-['Lexend'] text-on-surface" placeholder="Type a command or ask a question..." type="text"/>
-                <button className="bg-[#AF3E3E] text-white p-2.5 rounded-lg flex items-center justify-center active:scale-95 transition-transform">
-                  <span className="material-symbols-outlined">send</span>
-                </button>
-              </div>
-            </div>
-          </section>
+          <OVIChat />
 
           <div className="grid grid-cols-3 gap-6">
             <div className="bg-surface-container-high p-5 rounded-2xl border border-[#AF3E3E]/5 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 transition-all">
@@ -128,41 +99,7 @@ export default function DashboardPage() {
         </div>
 
         <aside className="w-80 flex flex-col gap-6">
-          <section className="bg-surface-container p-6 rounded-2xl border border-[#AF3E3E]/10 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-headline font-bold text-on-surface">System Vitals</h3>
-              <span className="material-symbols-outlined text-[#AF3E3E]/50">monitoring</span>
-            </div>
-            <div className="space-y-6">
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="font-label text-xs text-on-surface-variant">CPU Usage</span>
-                  <span className="font-label text-xs font-bold text-[#CD5656]">42%</span>
-                </div>
-                <div className="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
-                  <div className="h-full bg-[#CD5656] rounded-full" style={{ width: "42%" }}></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="font-label text-xs text-on-surface-variant">Memory Allocation</span>
-                  <span className="font-label text-xs font-bold text-[#CD5656]">8.4 GB</span>
-                </div>
-                <div className="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
-                  <div className="h-full bg-[#CD5656] rounded-full" style={{ width: "68%" }}></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="font-label text-xs text-on-surface-variant">Bandwidth Sync</span>
-                  <span className="font-label text-xs font-bold text-[#CD5656]">1.2 GB/s</span>
-                </div>
-                <div className="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
-                  <div className="h-full bg-[#CD5656] rounded-full" style={{ width: "15%" }}></div>
-                </div>
-              </div>
-            </div>
-          </section>
+          <SystemHUD />
 
           <section className="flex-1 bg-[#CD5656] rounded-2xl p-6 text-white relative overflow-hidden group">
             <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
