@@ -1,17 +1,36 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { SystemHUD } from "@/components/SystemHUD";
 import { OVIChat } from "@/components/OVIChat";
 
 export default function DashboardPage() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <>
-      <aside className="h-screen w-64 border-r fixed left-0 top-0 border-[#AF3E3E]/10 bg-[#EAEBD0] flex flex-col py-6 shadow-sm z-50">
-        <div className="px-6 mb-8">
-          <h1 className="text-xl font-bold font-['Public_Sans'] text-[#AF3E3E]">O.V.I. Command</h1>
-          <p className="font-['Lexend'] text-xs text-[#AF3E3E]/70 uppercase tracking-widest">Operational Intelligence</p>
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Left Sidebar (Navigation) */}
+      <aside className={`h-screen w-64 border-r fixed left-0 top-0 border-[#AF3E3E]/10 bg-[#EAEBD0] flex flex-col py-6 shadow-sm z-50 transition-transform duration-300 lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="px-6 mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-xl font-bold font-['Public_Sans'] text-[#AF3E3E]">O.V.I. Command</h1>
+            <p className="font-['Lexend'] text-xs text-[#AF3E3E]/70 uppercase tracking-widest">Operational Intelligence</p>
+          </div>
+          <button 
+            className="lg:hidden text-[#AF3E3E] p-1"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
         </div>
         <nav className="flex-1 flex flex-col gap-1 px-3">
           <a className="flex items-center gap-3 px-4 py-3 text-[#CD5656] font-bold border-r-4 border-[#CD5656] bg-[#DA6C6C]/10 transition-colors" href="#">
@@ -43,41 +62,50 @@ export default function DashboardPage() {
         </div>
       </aside>
 
-      <header className="h-16 w-full sticky top-0 z-40 border-b border-[#AF3E3E]/10 bg-[#EAEBD0]/95 backdrop-blur-md flex justify-between items-center px-6 pl-72">
-        <div className="flex items-center gap-4">
-          <h2 className="text-lg font-black font-['Public_Sans'] text-[#AF3E3E]">O.V.I. System</h2>
+      {/* Top Header */}
+      <header className="h-16 w-full sticky top-0 z-30 border-b border-[#AF3E3E]/10 bg-[#EAEBD0]/95 backdrop-blur-md flex justify-between items-center px-4 lg:px-6 lg:pl-72">
+        <div className="flex items-center gap-3">
+          <button 
+            className="lg:hidden p-2 text-[#AF3E3E]"
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            <span className="material-symbols-outlined">menu</span>
+          </button>
+          <h2 className="text-lg font-black font-['Public_Sans'] text-[#AF3E3E] hidden sm:block">O.V.I. System</h2>
         </div>
-        <div className="flex items-center gap-6">
-          <div className="relative group">
-            <input className="bg-surface-container-low border-none rounded-full py-1.5 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-[#DA6C6C] outline-none transition-all font-['Lexend']" placeholder="Search operational logs..." type="text"/>
+        <div className="flex items-center gap-3 lg:gap-6">
+          <div className="relative group hidden md:block">
+            <input className="bg-surface-container-low border-none rounded-full py-1.5 pl-10 pr-4 text-sm w-48 lg:w-64 focus:ring-2 focus:ring-[#DA6C6C] outline-none transition-all font-['Lexend']" placeholder="Search logs..." type="text"/>
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 lg:gap-3">
             <button className="p-2 text-[#AF3E3E]/80 hover:text-[#CD5656] transition-colors"><span className="material-symbols-outlined">notifications</span></button>
-            <button className="p-2 text-[#AF3E3E]/80 hover:text-[#CD5656] transition-colors"><span className="material-symbols-outlined">help</span></button>
-            <div className="h-8 w-8 rounded-full border-2 border-[#CD5656] overflow-hidden">
-                {/* Fallback image if Google link dies */}
+            <button className="p-2 text-[#AF3E3E]/80 hover:text-[#CD5656] transition-colors hidden sm:block"><span className="material-symbols-outlined">help</span></button>
+            <div className="h-8 w-8 rounded-full border-2 border-[#CD5656] overflow-hidden ml-2">
                 <div className="w-full h-full bg-[#CD5656]" />
             </div>
           </div>
         </div>
       </header>
 
-      <main className="ml-64 p-8 h-[calc(100vh-64px)] flex gap-8">
-        <div className="flex-1 flex flex-col gap-6">
+      {/* Main Content */}
+      <main className="lg:ml-64 p-4 lg:p-8 min-h-[calc(100vh-64px)] flex flex-col xl:flex-row gap-6 lg:gap-8 overflow-x-hidden">
+        
+        {/* Center Panel (Chat & Tools) */}
+        <div className="flex-1 flex flex-col gap-6 min-h-[600px] xl:min-h-0">
           <OVIChat />
 
-          <div className="grid grid-cols-3 gap-6">
-            <div className="bg-surface-container-high p-5 rounded-2xl border border-[#AF3E3E]/5 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 transition-all">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 shrink-0">
+            <div className="bg-surface-container-high p-4 lg:p-5 rounded-2xl border border-[#AF3E3E]/5 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 transition-all">
               <div className="p-3 bg-white rounded-xl text-[#CD5656] shadow-sm">
                 <span className="material-symbols-outlined">sync</span>
               </div>
               <div>
                 <h4 className="font-headline font-bold text-sm">Sync</h4>
-                <p className="font-label text-xs text-on-surface-variant">Update fleet nodes</p>
+                <p className="font-label text-xs text-on-surface-variant">Update fleet</p>
               </div>
             </div>
-            <div className="bg-surface-container-high p-5 rounded-2xl border border-[#AF3E3E]/5 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 transition-all">
+            <div className="bg-surface-container-high p-4 lg:p-5 rounded-2xl border border-[#AF3E3E]/5 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 transition-all">
               <div className="p-3 bg-white rounded-xl text-[#CD5656] shadow-sm">
                 <span className="material-symbols-outlined">hub</span>
               </div>
@@ -86,7 +114,7 @@ export default function DashboardPage() {
                 <p className="font-label text-xs text-on-surface-variant">Manage connections</p>
               </div>
             </div>
-            <div className="bg-surface-container-high p-5 rounded-2xl border border-[#AF3E3E]/5 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 transition-all">
+            <div className="bg-surface-container-high p-4 lg:p-5 rounded-2xl border border-[#AF3E3E]/5 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 transition-all">
               <div className="p-3 bg-white rounded-xl text-[#CD5656] shadow-sm">
                 <span className="material-symbols-outlined">security</span>
               </div>
@@ -98,10 +126,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <aside className="w-80 flex flex-col gap-6">
+        {/* Right Sidebar (System Vitals) */}
+        <aside className="w-full xl:w-80 flex flex-col gap-6 shrink-0">
           <SystemHUD />
 
-          <section className="flex-1 bg-[#CD5656] rounded-2xl p-6 text-white relative overflow-hidden group">
+          <section className="flex-1 bg-[#CD5656] rounded-2xl p-6 text-white relative overflow-hidden group min-h-[200px]">
             <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
               <span className="material-symbols-outlined text-[120px]" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
             </div>
@@ -109,7 +138,7 @@ export default function DashboardPage() {
               <span className="inline-block px-3 py-1 rounded-full bg-white/20 text-[10px] font-bold uppercase tracking-widest mb-4">Daily Insight</span>
               <h4 className="font-headline text-xl font-bold mb-3 leading-tight">Neural patterns suggest 12% optimization in data routing.</h4>
               <p className="font-body text-sm text-white/80 mb-6">Review the latest fleet telemetry to apply these changes automatically.</p>
-              <button className="w-full bg-white text-[#CD5656] py-3 rounded-lg font-label font-bold text-xs hover:bg-[#EAEBD0] transition-colors">
+              <button className="w-full bg-white text-[#CD5656] py-3 rounded-lg font-label font-bold text-xs hover:bg-[#EAEBD0] transition-colors mt-auto">
                   OPTIMIZE NOW
               </button>
             </div>
