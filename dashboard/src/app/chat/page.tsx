@@ -50,7 +50,13 @@ export default function ChatPage() {
 
       {/* Center Panel (Chat Full Screen) */}
       <div className="flex-1 flex flex-col min-h-0">
-        <OVIChat conversationId={activeSessionId} />
+        <OVIChat 
+          conversationId={activeSessionId} 
+          onNewConversation={(id) => {
+            setActiveSessionId(id);
+            oviClient.getChatSessions().then(setSessions).catch(console.error);
+          }}
+        />
       </div>
       
     </main>

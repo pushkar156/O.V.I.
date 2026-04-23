@@ -11,7 +11,7 @@ interface Message {
   isStreaming?: boolean;
 }
 
-export const OVIChat: React.FC<{ conversationId?: string }> = ({ conversationId }) => {
+export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (id: string) => void }> = ({ conversationId, onNewConversation }) => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -71,6 +71,10 @@ export const OVIChat: React.FC<{ conversationId?: string }> = ({ conversationId 
     try {
       // Show an immediate processing indicator if desired, or just wait for the real response
       const response = await oviClient.chat(input, conversationId);
+      
+      if (!conversationId && onNewConversation && response.conversation_id) {
+        onNewConversation(response.conversation_id);
+      }
       
       const aiMsg: Message = { 
         id: (Date.now() + 1).toString(), 

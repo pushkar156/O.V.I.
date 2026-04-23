@@ -22,7 +22,8 @@ class ShortTermMemory:
                 conv = result.scalar_one_or_none()
                 
                 if not conv:
-                    conv = Conversation(id=conversation_id, title="New Chat")
+                    title = content[:25] + "..." if len(content) > 25 else content
+                    conv = Conversation(id=conversation_id, title=title)
                     session.add(conv)
                 
                 # 2. Add message

@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/chat", tags=["Chat"])
 
 class ChatRequest(BaseModel):
     message: str
-    conversation_id: Optional[str] = "default-session"
+    conversation_id: Optional[str] = None
     context: Optional[Dict[str, Any]] = None
 
 class ToolUsage(BaseModel):
@@ -34,7 +34,8 @@ async def chat_endpoint(request: ChatRequest):
     Processes intent, executes tools, and returns a natural language response.
     """
     logger.info(f"Received chat request: {request.message}")
-    conv_id = request.conversation_id or "default-session"
+    import uuid
+    conv_id = request.conversation_id if request.conversation_id else str(uuid.uuid4())
     
     # 1. Prepare context and instructions
     tool_defs = get_tool_definitions()
