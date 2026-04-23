@@ -106,10 +106,10 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="lg:ml-64 p-4 lg:p-8 min-h-[calc(100vh-64px)] flex flex-col xl:flex-row gap-6 lg:gap-8 overflow-x-hidden">
+      <main className="lg:ml-64 p-4 lg:p-8 min-h-[calc(100vh-64px)] xl:h-[calc(100vh-64px)] flex flex-col xl:flex-row gap-6 lg:gap-8 overflow-x-hidden xl:overflow-hidden">
         
         {/* Center Panel (Chat & Tools) */}
-        <div className="flex-1 flex flex-col gap-6 min-h-[600px] xl:min-h-0">
+        <div className="flex-1 flex flex-col gap-6 min-h-[600px] xl:min-h-0 xl:h-full">
           <OVIChat />
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 shrink-0">
@@ -144,7 +144,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Right Sidebar (System Vitals) */}
-        <aside className="w-full xl:w-80 flex flex-col gap-6 shrink-0">
+        <aside className="w-full xl:w-80 flex flex-col gap-6 shrink-0 xl:overflow-y-auto scrollbar-hide xl:pb-4">
           <SystemHUD />
 
           <section className="flex-1 bg-[#CD5656] dark:bg-surface-container-lowest dark:border dark:border-[#5b403d]/15 rounded-2xl p-6 text-white relative overflow-hidden group min-h-[200px]">
