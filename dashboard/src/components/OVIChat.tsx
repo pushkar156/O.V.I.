@@ -81,31 +81,59 @@ export const OVIChat: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto z-10 px-4 md:px-8 pt-8 pb-32 flex flex-col scrollbar-hide">
         {messages.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center">
-            <div 
+          <div className="flex-1 flex flex-col items-center justify-center text-center relative">
+            
+            {/* The Massive Audio-Reactive Orb */}
+            <motion.div 
               onClick={toggleRecording}
-              className={`mb-6 inline-flex p-4 rounded-full cursor-pointer transition-all duration-300 ${isRecording ? 'bg-[#CD5656] dark:bg-[#cc3a3a] text-white shadow-[0_0_40px_rgba(205,86,86,0.6)] dark:shadow-[0_0_40px_rgba(255,179,174,0.4)] scale-110 animate-pulse' : 'bg-[#CD5656]/5 dark:bg-[#ffb3ae]/10 text-[#CD5656] dark:text-[#ffb3ae] shadow-[0_0_20px_rgba(205,86,86,0.1)] dark:shadow-[0_0_20px_rgba(255,179,174,0.1)] hover:bg-[#CD5656]/10 dark:hover:bg-[#ffb3ae]/20'}`}
+              animate={{ 
+                scale: isRecording ? 1 + (volume / 200) : 1, // Scales up to 1.5x based on volume
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className={`relative mb-8 rounded-full cursor-pointer flex items-center justify-center transition-all duration-300 ${
+                isRecording 
+                  ? 'w-48 h-48 bg-[#CD5656]/20 dark:bg-[#ffb3ae]/10 shadow-[0_0_100px_rgba(205,86,86,0.3)] dark:shadow-[0_0_100px_rgba(255,179,174,0.2)]' 
+                  : 'w-32 h-32 bg-[#CD5656]/5 dark:bg-[#ffb3ae]/5 hover:scale-105 shadow-[0_0_40px_rgba(205,86,86,0.1)] dark:shadow-[0_0_40px_rgba(255,179,174,0.05)]'
+              }`}
             >
-              <span className="material-symbols-outlined text-5xl">mic</span>
-            </div>
-            <h3 className="font-headline text-2xl md:text-3xl font-bold text-on-surface dark:text-[#e5e2e1] mb-2">
+              {/* Inner Glowing Core */}
+              <motion.div 
+                animate={{
+                  scale: isRecording ? 1 + (volume / 100) : 1,
+                  opacity: isRecording ? 0.8 + (volume / 500) : 0.5
+                }}
+                className={`absolute w-full h-full rounded-full blur-xl transition-colors duration-300 ${
+                  isRecording ? 'bg-[#CD5656] dark:bg-[#cc3a3a]' : 'bg-[#CD5656]/40 dark:bg-[#ffb3ae]/40'
+                }`}
+              />
+
+              {/* Center Mic Icon */}
+              <span className={`material-symbols-outlined text-5xl relative z-10 transition-colors duration-300 ${
+                isRecording ? 'text-white dark:text-[#fff2f0]' : 'text-[#CD5656] dark:text-[#ffb3ae]'
+              }`}>
+                mic
+              </span>
+
+              {/* Dynamic Waveform Rings (only when recording) */}
+              <AnimatePresence>
+                {isRecording && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.2 }}
+                    className="absolute inset-0 border-2 border-[#CD5656]/40 dark:border-[#ffb3ae]/40 rounded-full"
+                    style={{ transform: `scale(${1 + (volume / 150)})` }}
+                  />
+                )}
+              </AnimatePresence>
+            </motion.div>
+
+            <h3 className="font-headline text-2xl md:text-3xl font-bold text-on-surface dark:text-[#e5e2e1] mb-2 z-10">
               {isRecording ? "Listening..." : "How can I help you today?"}
             </h3>
-            <p className="font-label text-sm text-on-surface-variant dark:text-[#e5e2e1]/60">
+            <p className="font-label text-sm text-on-surface-variant dark:text-[#e5e2e1]/60 z-10">
               {isRecording ? "Speak your directive clearly." : "System listening for operational directives..."}
             </p>
-
-            {/* Dynamic Web Audio API Waveform */}
-            <div className={`absolute bottom-32 w-full h-24 flex items-center justify-center gap-1.5 pointer-events-none transition-opacity duration-500 ${isRecording ? 'opacity-90' : 'opacity-30'}`}>
-              {[0, 1, 2, 3, 4, 5, 6].map((i) => (
-                <motion.div 
-                  key={i}
-                  className="w-1.5 bg-[#CD5656] dark:bg-[#ffb3ae] rounded-full shadow-[0_0_10px_rgba(205,86,86,0.5)] dark:shadow-[0_0_10px_rgba(255,179,174,0.4)]"
-                  animate={{ height: getBarHeight(i) }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                />
-              ))}
-            </div>
           </div>
         ) : (
           <div className="space-y-6 flex-1 flex flex-col justify-end">
@@ -113,14 +141,15 @@ export const OVIChat: React.FC = () => {
               {messages.map((msg) => (
                 <motion.div
                   key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 15, filter: "blur(8px)", scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+                  transition={{ duration: 0.4, type: "spring", bounce: 0.2 }}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`max-w-[90%] md:max-w-[80%] p-4 rounded-2xl ${
                     msg.role === 'user' 
                       ? 'bg-[#CD5656] dark:bg-[#cc3a3a] text-white dark:text-[#fff2f0] rounded-br-sm shadow-md' 
-                      : 'bg-surface-container-high dark:bg-[#2a2a2a] text-on-surface dark:text-[#e5e2e1] rounded-bl-sm border border-[#AF3E3E]/10 dark:border-[#5b403d]/15'
+                      : 'bg-surface-container-high dark:bg-[#2a2a2a] text-on-surface dark:text-[#e5e2e1] rounded-bl-sm border border-[#AF3E3E]/10 dark:border-[#5b403d]/15 shadow-sm'
                   }`}>
                     <p className="font-body text-sm leading-relaxed">{msg.content}</p>
                   </div>

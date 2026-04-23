@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { SystemHUD } from "@/components/SystemHUD";
 import { OVIChat } from "@/components/OVIChat";
 import { DeviceStatus } from "@/components/DeviceStatus";
@@ -14,7 +15,12 @@ export default function DashboardPage() {
         <OVIChat />
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 shrink-0">
-          <div className="bg-surface-container-high dark:bg-[#201f1f] p-4 lg:p-5 rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 dark:hover:border-[#ffb3ae]/30 transition-all">
+          <motion.div 
+            whileHover={{ scale: 1.02 }} 
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="bg-surface-container-high dark:bg-[#201f1f] p-4 lg:p-5 rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 dark:hover:border-[#ffb3ae]/30 transition-all shadow-sm"
+          >
             <div className="p-3 bg-white dark:bg-[#353534] rounded-xl text-[#CD5656] dark:text-[#ffb3ae] shadow-sm">
               <span className="material-symbols-outlined">sync</span>
             </div>
@@ -22,8 +28,13 @@ export default function DashboardPage() {
               <h4 className="font-headline font-bold text-sm dark:text-[#e5e2e1]">Sync</h4>
               <p className="font-label text-xs text-on-surface-variant dark:text-on-surface-variant">Update fleet</p>
             </div>
-          </div>
-          <div className="bg-surface-container-high dark:bg-[#201f1f] p-4 lg:p-5 rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 dark:hover:border-[#ffb3ae]/30 transition-all">
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.02 }} 
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="bg-surface-container-high dark:bg-[#201f1f] p-4 lg:p-5 rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 dark:hover:border-[#ffb3ae]/30 transition-all shadow-sm"
+          >
             <div className="p-3 bg-white dark:bg-[#353534] rounded-xl text-[#CD5656] dark:text-[#ffb3ae] shadow-sm">
               <span className="material-symbols-outlined">hub</span>
             </div>
@@ -31,8 +42,13 @@ export default function DashboardPage() {
               <h4 className="font-headline font-bold text-sm dark:text-[#e5e2e1]">Hub</h4>
               <p className="font-label text-xs text-on-surface-variant dark:text-on-surface-variant">Manage connections</p>
             </div>
-          </div>
-          <div className="bg-surface-container-high dark:bg-[#201f1f] p-4 lg:p-5 rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 dark:hover:border-[#ffb3ae]/30 transition-all">
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.02 }} 
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="bg-surface-container-high dark:bg-[#201f1f] p-4 lg:p-5 rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex items-center gap-4 group cursor-pointer hover:border-[#CD5656]/30 dark:hover:border-[#ffb3ae]/30 transition-all shadow-sm"
+          >
             <div className="p-3 bg-white dark:bg-[#353534] rounded-xl text-[#CD5656] dark:text-[#ffb3ae] shadow-sm">
               <span className="material-symbols-outlined">security</span>
             </div>
@@ -40,7 +56,7 @@ export default function DashboardPage() {
               <h4 className="font-headline font-bold text-sm dark:text-[#e5e2e1]">Vault</h4>
               <p className="font-label text-xs text-on-surface-variant dark:text-on-surface-variant">Encrypted assets</p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
