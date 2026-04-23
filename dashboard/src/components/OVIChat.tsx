@@ -49,7 +49,7 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
       // For now, let's just simulate the transcription arriving:
       const userMsg: Message = { id: Date.now().toString(), role: 'user', content: "Voice command received." };
       setMessages(prev => [...prev, userMsg]);
-      
+
       setTimeout(() => {
         const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: "Voice processed. Running command." };
         setMessages(prev => [...prev, aiMsg]);
@@ -71,24 +71,24 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
     try {
       // Show an immediate processing indicator if desired, or just wait for the real response
       const response = await oviClient.chat(input, conversationId);
-      
+
       if (!conversationId && onNewConversation && response.conversation_id) {
         onNewConversation(response.conversation_id);
       }
-      
-      const aiMsg: Message = { 
-        id: (Date.now() + 1).toString(), 
-        role: 'assistant', 
-        content: response.response 
+
+      const aiMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: response.response
       };
       setMessages(prev => [...prev, aiMsg]);
-      
+
     } catch (error: any) {
       console.error("Chat Error:", error);
-      const errorMsg: Message = { 
-        id: (Date.now() + 1).toString(), 
-        role: 'assistant', 
-        content: "Error: Neural Link Offline. I cannot reach the Ollama inference engine. Please ensure Ollama is installed and running." 
+      const errorMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: "Error: Neural Link Offline. I cannot reach the Ollama inference engine. Please ensure Ollama is installed and running."
       };
       setMessages(prev => [...prev, errorMsg]);
     }
@@ -97,9 +97,9 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
   // Calculate dynamic heights based on base volume + some math math to make it look like a waveform
   const getBarHeight = (index: number) => {
     if (!isRecording) {
-        // Idle state heights
-        const idleHeights = [8, 16, 24, 12, 32, 18, 12];
-        return idleHeights[index];
+      // Idle state heights
+      const idleHeights = [8, 16, 24, 12, 32, 18, 12];
+      return idleHeights[index];
     }
     // Dynamic height based on volume and index
     const baseHeight = 12;
@@ -109,7 +109,7 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
   };
 
   return (
-    <section className="flex-1 bg-surface-container-lowest dark:bg-[#1c1b1b] rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex flex-col relative overflow-hidden transition-colors duration-300">
+    <section className="flex-1 h-full bg-surface-container-lowest dark:bg-[#1c1b1b] rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex flex-col relative overflow-hidden transition-colors duration-300">
       {/* Background Glow */}
       <div className="absolute inset-0 opacity-10 dark:opacity-20 pointer-events-none transition-all duration-300 dark:bg-[radial-gradient(circle_at_50%_50%,_#ffb3ae_0%,_transparent_70%)]" style={{ backgroundImage: "radial-gradient(circle at 50% 50%, #CD5656 0%, transparent 70%)" }}></div>
 
@@ -117,42 +117,39 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
       <div className="flex-1 overflow-y-auto z-10 px-4 md:px-8 pt-8 pb-32 flex flex-col scrollbar-hide">
         {messages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center relative">
-            
+
             {/* The Massive Audio-Reactive Orb */}
-            <motion.div 
+            <motion.div
               onClick={toggleRecording}
-              animate={{ 
+              animate={{
                 scale: isRecording ? 1 + (volume / 200) : 1, // Scales up to 1.5x based on volume
               }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className={`relative mb-8 rounded-full cursor-pointer flex items-center justify-center transition-all duration-300 ${
-                isRecording 
-                  ? 'w-48 h-48 bg-[#CD5656]/20 dark:bg-[#ffb3ae]/10 shadow-[0_0_100px_rgba(205,86,86,0.3)] dark:shadow-[0_0_100px_rgba(255,179,174,0.2)]' 
+              className={`relative mb-8 rounded-full cursor-pointer flex items-center justify-center transition-all duration-300 ${isRecording
+                  ? 'w-48 h-48 bg-[#CD5656]/20 dark:bg-[#ffb3ae]/10 shadow-[0_0_100px_rgba(205,86,86,0.3)] dark:shadow-[0_0_100px_rgba(255,179,174,0.2)]'
                   : 'w-32 h-32 bg-[#CD5656]/5 dark:bg-[#ffb3ae]/5 hover:scale-105 shadow-[0_0_40px_rgba(205,86,86,0.1)] dark:shadow-[0_0_40px_rgba(255,179,174,0.05)]'
-              }`}
+                }`}
             >
               {/* Inner Glowing Core */}
-              <motion.div 
+              <motion.div
                 animate={{
                   scale: isRecording ? 1 + (volume / 100) : 1,
                   opacity: isRecording ? 0.8 + (volume / 500) : 0.5
                 }}
-                className={`absolute w-full h-full rounded-full blur-xl transition-colors duration-300 ${
-                  isRecording ? 'bg-[#CD5656] dark:bg-[#cc3a3a]' : 'bg-[#CD5656]/40 dark:bg-[#ffb3ae]/40'
-                }`}
+                className={`absolute w-full h-full rounded-full blur-xl transition-colors duration-300 ${isRecording ? 'bg-[#CD5656] dark:bg-[#cc3a3a]' : 'bg-[#CD5656]/40 dark:bg-[#ffb3ae]/40'
+                  }`}
               />
 
               {/* Center Mic Icon */}
-              <span className={`material-symbols-outlined text-5xl relative z-10 transition-colors duration-300 ${
-                isRecording ? 'text-white dark:text-[#fff2f0]' : 'text-[#CD5656] dark:text-[#ffb3ae]'
-              }`}>
+              <span className={`material-symbols-outlined text-5xl relative z-10 transition-colors duration-300 ${isRecording ? 'text-white dark:text-[#fff2f0]' : 'text-[#CD5656] dark:text-[#ffb3ae]'
+                }`}>
                 mic
               </span>
 
               {/* Dynamic Waveform Rings (only when recording) */}
               <AnimatePresence>
                 {isRecording && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.2 }}
@@ -181,11 +178,10 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
                   transition={{ duration: 0.4, type: "spring", bounce: 0.2 }}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[90%] md:max-w-[80%] p-4 rounded-2xl ${
-                    msg.role === 'user' 
-                      ? 'bg-[#CD5656] dark:bg-[#cc3a3a] text-white dark:text-[#fff2f0] rounded-br-sm shadow-md' 
+                  <div className={`max-w-[90%] md:max-w-[80%] p-4 rounded-2xl ${msg.role === 'user'
+                      ? 'bg-[#CD5656] dark:bg-[#cc3a3a] text-white dark:text-[#fff2f0] rounded-br-sm shadow-md'
                       : 'bg-surface-container-high dark:bg-[#2a2a2a] text-on-surface dark:text-[#e5e2e1] rounded-bl-sm border border-[#AF3E3E]/10 dark:border-[#5b403d]/15 shadow-sm'
-                  }`}>
+                    }`}>
                     <p className="font-body text-sm leading-relaxed">{msg.content}</p>
                   </div>
                 </motion.div>
@@ -199,16 +195,16 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
       {/* Input Bar */}
       <div className="absolute bottom-4 md:bottom-8 left-4 md:left-8 right-4 md:right-8 z-20">
         <form onSubmit={handleSubmit} className="bg-surface-container dark:bg-[#201f1f] rounded-xl p-2 flex items-center gap-2 md:gap-4 shadow-xl border border-[#AF3E3E]/10 dark:border-[#5b403d]/15">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={toggleRecording}
             className={`p-2 rounded-lg transition-colors ${isRecording ? 'text-white dark:text-[#fff2f0] bg-[#CD5656] dark:bg-[#cc3a3a] animate-pulse' : 'text-[#CD5656] dark:text-[#ffb3ae] hover:bg-surface-variant dark:hover:bg-[#353534]'}`}
           >
             <span className="material-symbols-outlined">{isRecording ? 'stop_circle' : 'mic'}</span>
           </button>
-          <input 
-            className="flex-1 bg-transparent border-none outline-none focus:ring-0 font-['Lexend'] text-on-surface dark:text-[#e5e2e1] text-sm w-full min-w-0" 
-            placeholder="Type a command or ask a question..." 
+          <input
+            className="flex-1 bg-transparent border-none outline-none focus:ring-0 font-['Lexend'] text-on-surface dark:text-[#e5e2e1] text-sm w-full min-w-0"
+            placeholder="Type a command or ask a question..."
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
