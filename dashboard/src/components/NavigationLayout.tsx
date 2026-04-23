@@ -17,6 +17,7 @@ export function NavigationLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { name: "Command Center", href: "/", icon: "dashboard" },
+    { name: "Neural Chat", href: "/chat", icon: "forum" },
     { name: "AI Analytics", href: "/memory", icon: "psychology" },
   ];
 

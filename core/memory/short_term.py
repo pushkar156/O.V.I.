@@ -60,5 +60,25 @@ class ShortTermMemory:
                 logger.error(f"Failed to retrieve history: {e}")
                 return []
 
+    async def get_conversations(self) -> List[Dict[str, Any]]:
+        """Retrieves a list of all conversations."""
+        async with AsyncSessionLocal() as session:
+            try:
+                stmt = select(Conversation).order_by(Conversation.created_at.desc())
+                result = await session.execute(stmt)
+                conversations = result.scalars().all()
+                
+                return [
+                    {
+                        "id": conv.id,
+                        "title": conv.title,
+                        "created_at": conv.created_at.isoformat() if conv.created_at else None
+                    }
+                    for conv in conversations
+                ]
+            except Exception as e:
+                logger.error(f"Failed to list conversations: {e}")
+                return []
+
 # Global instance
 memory_manager = ShortTermMemory()

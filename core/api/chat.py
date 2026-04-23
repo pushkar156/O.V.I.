@@ -93,3 +93,15 @@ async def chat_endpoint(request: ChatRequest):
     except Exception as e:
         logger.error(f"Error in chat endpoint: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/sessions")
+async def get_chat_sessions():
+    """Retrieve all past chat conversations."""
+    conversations = await memory_manager.get_conversations()
+    return conversations
+
+@router.get("/history/{conversation_id}")
+async def get_chat_history(conversation_id: str):
+    """Retrieve message history for a specific conversation."""
+    history = await memory_manager.get_history(conversation_id, limit=50)
+    return history

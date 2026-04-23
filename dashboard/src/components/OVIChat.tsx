@@ -11,7 +11,7 @@ interface Message {
   isStreaming?: boolean;
 }
 
-export const OVIChat: React.FC = () => {
+export const OVIChat: React.FC<{ conversationId?: string }> = ({ conversationId }) => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -23,6 +23,22 @@ export const OVIChat: React.FC = () => {
   };
 
   useEffect(scrollToBottom, [messages]);
+
+  // Load History when conversationId changes
+  useEffect(() => {
+    if (conversationId) {
+      oviClient.getChatHistory(conversationId).then(history => {
+        const formatted: Message[] = history.map((h: any, i: number) => ({
+          id: `hist-${i}`,
+          role: h.role,
+          content: h.content
+        }));
+        setMessages(formatted);
+      }).catch(console.error);
+    } else {
+      setMessages([]);
+    }
+  }, [conversationId]);
 
   const toggleRecording = async () => {
     if (isRecording) {
@@ -54,7 +70,7 @@ export const OVIChat: React.FC = () => {
 
     try {
       // Show an immediate processing indicator if desired, or just wait for the real response
-      const response = await oviClient.chat(input);
+      const response = await oviClient.chat(input, conversationId);
       
       const aiMsg: Message = { 
         id: (Date.now() + 1).toString(), 
