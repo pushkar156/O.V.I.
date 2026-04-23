@@ -8,10 +8,10 @@ import { DeviceStatus } from "@/components/DeviceStatus";
 
 export default function DashboardPage() {
   return (
-    <main className="p-4 lg:p-8 xl:h-[calc(100vh-64px)] flex flex-col xl:flex-row gap-6 lg:gap-8 overflow-x-hidden xl:overflow-hidden flex-1">
+    <main className="p-4 lg:p-8 h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] flex flex-col xl:flex-row gap-6 lg:gap-8 overflow-hidden flex-1">
       
       {/* Center Panel (Chat & Tools) */}
-      <div className="flex-1 flex flex-col gap-6 min-h-[600px] xl:min-h-0 xl:h-full">
+      <div className="flex-1 flex flex-col gap-6 min-h-0">
         <OVIChat />
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 shrink-0">

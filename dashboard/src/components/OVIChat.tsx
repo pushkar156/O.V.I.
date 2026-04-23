@@ -44,7 +44,7 @@ export const OVIChat: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
@@ -52,11 +52,26 @@ export const OVIChat: React.FC = () => {
     setMessages(prev => [...prev, userMsg]);
     setInput("");
 
-    // Simulated AI Response
-    setTimeout(() => {
-      const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: "Acknowledged. I am processing your command through the neural mesh." };
+    try {
+      // Show an immediate processing indicator if desired, or just wait for the real response
+      const response = await oviClient.chat(input);
+      
+      const aiMsg: Message = { 
+        id: (Date.now() + 1).toString(), 
+        role: 'assistant', 
+        content: response.response 
+      };
       setMessages(prev => [...prev, aiMsg]);
-    }, 600);
+      
+    } catch (error: any) {
+      console.error("Chat Error:", error);
+      const errorMsg: Message = { 
+        id: (Date.now() + 1).toString(), 
+        role: 'assistant', 
+        content: "Error: Neural Link Offline. I cannot reach the Ollama inference engine. Please ensure Ollama is installed and running." 
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    }
   };
 
   // Calculate dynamic heights based on base volume + some math math to make it look like a waveform
@@ -136,7 +151,7 @@ export const OVIChat: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="space-y-6 flex-1 flex flex-col justify-end">
+          <div className="space-y-6 flex-1 flex flex-col">
             <AnimatePresence>
               {messages.map((msg) => (
                 <motion.div
