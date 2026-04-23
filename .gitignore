@@ -35,6 +35,7 @@ chroma_db/
 
 # Environment
 .env
+.env.local
 
 # IDEs
 .vscode/
@@ -47,10 +48,22 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
-# Dashboard/Mobile
+# Dashboard/Mobile / Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Next.js
 dashboard/.next/
-dashboard/node_modules/
-mobile/node_modules/
+dashboard/out/
 mobile/dist/
 
 # Misc

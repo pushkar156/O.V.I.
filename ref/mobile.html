@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;family=Lexend:wght@300;400;500;600;700;800;900&amp;family=Sora:wght@400;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#410007",
+                        "secondary-container": "#ff8988",
+                        "outline": "#717785",
+                        "surface-container-low": "#fff0ef",
+                        "background": "#fff8f7",
+                        "surface-container-highest": "#ffdad7",
+                        "primary-fixed": "#e3e4ca",
+                        "error": "#ba1a1a",
+                        "primary-container": "#747660",
+                        "surface-tint": "#5e604b",
+                        "outline-variant": "#c1c6d5",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#c7c8af",
+                        "on-tertiary-fixed": "#410006",
+                        "primary-fixed-dim": "#c7c8af",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#c34e4f",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#ffb3b1",
+                        "on-surface-variant": "#414753",
+                        "on-tertiary-container": "#fffbff",
+                        "on-secondary-fixed-variant": "#80282b",
+                        "secondary-fixed": "#ffdad8",
+                        "on-secondary-container": "#762025",
+                        "on-primary-container": "#fefee3",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#464835",
+                        "on-surface": "#410005",
+                        "on-error-container": "#93000a",
+                        "on-background": "#410005",
+                        "inverse-surface": "#660510",
+                        "on-tertiary-fixed-variant": "#852126",
+                        "surface-dim": "#ffcfcb",
+                        "surface-container-high": "#ffe1df",
+                        "surface-bright": "#fff8f7",
+                        "tertiary-fixed-dim": "#ffb3b0",
+                        "surface-variant": "#ffdad7",
+                        "on-primary-fixed": "#1b1d0c",
+                        "primary": "#5b5e49",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#ffdad8",
+                        "surface": "#fff8f7",
+                        "surface-container": "#ffe9e7",
+                        "tertiary": "#a23638",
+                        "secondary": "#9f3f41",
+                        "inverse-on-surface": "#ffedeb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Sora"],
+                        "body": ["IBM Plex Sans"],
+                        "label": ["Lexend"],
+                        "public": ["Public Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+
+        body {
+            background-color: #EAEBD0;
+        }
+
+        .waveform-bar {
+            animation: pulse-height 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-height {
+            from {
+                height: 8px;
+            }
+
+            to {
+                height: 32px;
+            }
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="font-public text-on-surface antialiased">
+    <!-- TopAppBar -->
+    <header
+        class="fixed top-0 left-0 w-full z-50 bg-[#EAEBD0] dark:bg-stone-950 shadow-sm border-b border-[#AF3E3E]/10 dark:border-stone-800 flex justify-between items-center px-4 h-16">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center overflow-hidden border border-tertiary/20">
+                <img alt="User Profile" class="w-full h-full object-cover"
+                    data-alt="minimalistic user avatar silhouette in warm tonal red and cream palette"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGhNgyC5IaqvAObRat0UEIkvmhdilT-8rIRxsc3lPeX7QSn2GduFac_Dj3lT19P43TZ4mnQf8JUUyCMdH2YW0C-t7AwtXDtsM4R1PoUMLtAO9Eworq6rzEZndV3PjS9pJcaNTt2t6Cwkbxf3IjQdmkFbMPUl5qHI2ncXQmzZnrFeeSujjgeJ3yZRfpnH8-laD5TtEfMH6wxMhOkEVLDTxjVOsZzyZc9tvfUEMwDIIE1MimMasP5oFQQrMZEQHb-NKazyimoXaU6Q" />
+            </div>
+            <h1 class="font-['Lexend'] font-black tracking-tighter text-[#AF3E3E] dark:text-[#EAEBD0] text-2xl">O.V.I.
+            </h1>
+        </div>
+        <button
+            class="w-10 h-10 flex items-center justify-center rounded-full text-[#AF3E3E]/70 dark:text-stone-400 hover:bg-[#DA6C6C]/10 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-150">
+            <span class="material-symbols-outlined" data-icon="search">search</span>
+        </button>
+    </header>
+    <!-- Main Content -->
+    <main class="pt-20 pb-24 px-4 min-h-screen overflow-y-auto space-y-6">
+        <!-- Daily Insight Card -->
+        <section class="bg-tertiary text-on-tertiary rounded-xl p-5 shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-on-tertiary/5 rounded-full -mr-16 -mt-16"></div>
+            <div class="relative z-10 flex flex-col gap-1">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="material-symbols-outlined text-[18px]" data-icon="lightbulb">lightbulb</span>
+                    <span class="font-label text-xs font-bold uppercase tracking-widest text-on-tertiary/80">Daily
+                        Insight</span>
+                </div>
+                <p class="font-public text-xl font-bold leading-tight">Efficiency predicted to rise 14%</p>
+                <p class="font-public text-xs text-on-tertiary/70 mt-1 italic">Based on current fleet performance and
+                    resource allocation.</p>
+            </div>
+        </section>
+        <!-- Conversational Interface -->
+        <section class="flex flex-col items-center py-8 space-y-8">
+            <h2 class="font-public text-3xl font-extrabold text-on-surface text-center leading-tight px-4">How can I
+                help you today?</h2>
+            <!-- Voice Waveform -->
+            <div class="flex items-center justify-center gap-1 h-12">
+                <div class="waveform-bar w-1.5 bg-tertiary rounded-full" style="animation-delay: 0s;"></div>
+                <div class="waveform-bar w-1.5 bg-tertiary rounded-full" style="animation-delay: 0.2s; height: 16px;">
+                </div>
+                <div class="waveform-bar w-1.5 bg-tertiary rounded-full" style="animation-delay: 0.4s; height: 24px;">
+                </div>
+                <div class="waveform-bar w-1.5 bg-tertiary rounded-full" style="animation-delay: 0.1s; height: 40px;">
+                </div>
+                <div class="waveform-bar w-1.5 bg-tertiary rounded-full" style="animation-delay: 0.3s; height: 28px;">
+                </div>
+                <div class="waveform-bar w-1.5 bg-tertiary rounded-full" style="animation-delay: 0.5s; height: 20px;">
+                </div>
+                <div class="waveform-bar w-1.5 bg-tertiary rounded-full" style="animation-delay: 0.2s; height: 12px;">
+                </div>
+            </div>
+            <!-- Message Input -->
+            <div class="w-full relative group">
+                <input
+                    class="w-full bg-[#EAEBD0] border-2 border-tertiary/20 rounded-full py-4 pl-6 pr-14 focus:outline-none focus:border-tertiary/60 font-public transition-all shadow-inner text-on-surface placeholder:text-on-surface/30"
+                    placeholder="Type a command..." type="text" />
+                <button
+                    class="absolute right-2 top-2 w-10 h-10 bg-tertiary text-on-tertiary rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform">
+                    <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+                </button>
+            </div>
+        </section>
+        <!-- System Vitals -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between px-1">
+                <h3 class="font-label font-bold text-xs uppercase tracking-widest text-[#AF3E3E]">System Vitals</h3>
+                <span class="material-symbols-outlined text-[#AF3E3E]/60" data-icon="more_horiz">more_horiz</span>
+            </div>
+            <div class="bg-surface-container/30 border border-[#AF3E3E]/5 rounded-xl p-5 space-y-5">
+                <!-- CPU -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-[11px] font-label font-bold uppercase text-[#AF3E3E]/70">
+                        <span>CPU Load</span>
+                        <span>42%</span>
+                    </div>
+                    <div class="h-2 w-full bg-[#AF3E3E]/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-tertiary rounded-full" style="width: 42%"></div>
+                    </div>
+                </div>
+                <!-- Memory -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-[11px] font-label font-bold uppercase text-[#AF3E3E]/70">
+                        <span>Memory</span>
+                        <span>68%</span>
+                    </div>
+                    <div class="h-2 w-full bg-[#AF3E3E]/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-secondary rounded-full" style="width: 68%"></div>
+                    </div>
+                </div>
+                <!-- Bandwidth -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-[11px] font-label font-bold uppercase text-[#AF3E3E]/70">
+                        <span>Bandwidth</span>
+                        <span>12%</span>
+                    </div>
+                    <div class="h-2 w-full bg-[#AF3E3E]/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary rounded-full" style="width: 12%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Quick Actions Grid -->
+        <section class="grid grid-cols-3 gap-3">
+            <button
+                class="bg-[#EAEBD0] border border-[#AF3E3E]/10 rounded-xl p-4 flex flex-col items-center justify-center gap-2 group hover:bg-tertiary/5 transition-colors">
+                <div
+                    class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center text-secondary">
+                    <span class="material-symbols-outlined" data-icon="sync">sync</span>
+                </div>
+                <span class="font-label text-[11px] font-bold uppercase text-[#AF3E3E]">Sync</span>
+            </button>
+            <button
+                class="bg-[#EAEBD0] border border-[#AF3E3E]/10 rounded-xl p-4 flex flex-col items-center justify-center gap-2 group hover:bg-tertiary/5 transition-colors">
+                <div
+                    class="w-10 h-10 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+                    <span class="material-symbols-outlined" data-icon="hub">hub</span>
+                </div>
+                <span class="font-label text-[11px] font-bold uppercase text-[#AF3E3E]">Hub</span>
+            </button>
+            <button
+                class="bg-[#EAEBD0] border border-[#AF3E3E]/10 rounded-xl p-4 flex flex-col items-center justify-center gap-2 group hover:bg-tertiary/5 transition-colors">
+                <div
+                    class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined" data-icon="lock">lock</span>
+                </div>
+                <span class="font-label text-[11px] font-bold uppercase text-[#AF3E3E]">Vault</span>
+            </button>
+        </section>
+    </main>
+    <!-- BottomNavBar -->
+    <nav
+        class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-[#EAEBD0] dark:bg-stone-900 border-t border-[#AF3E3E]/20 dark:border-stone-800 shadow-[0_-2px_10px_rgba(175,62,62,0.05)]">
+        <button
+            class="flex flex-col items-center justify-center bg-[#DA6C6C]/20 dark:bg-[#CD5656]/30 text-[#AF3E3E] dark:text-[#EAEBD0] rounded-xl px-3 py-1 active:translate-y-0.5 transition-transform">
+            <span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+            <span class="font-['Lexend'] text-[10px] font-medium">Command</span>
+        </button>
+        <button
+            class="flex flex-col items-center justify-center text-[#AF3E3E]/60 dark:text-stone-500 hover:text-[#CD5656] active:translate-y-0.5 transition-transform">
+            <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+            <span class="font-['Lexend'] text-[10px] font-medium">Analytics</span>
+        </button>
+        <button
+            class="flex flex-col items-center justify-center text-[#AF3E3E]/60 dark:text-stone-500 hover:text-[#CD5656] active:translate-y-0.5 transition-transform">
+            <span class="material-symbols-outlined" data-icon="monitor_heart">monitor_heart</span>
+            <span class="font-['Lexend'] text-[10px] font-medium">Health</span>
+        </button>
+        <button
+            class="flex flex-col items-center justify-center text-[#AF3E3E]/60 dark:text-stone-500 hover:text-[#CD5656] active:translate-y-0.5 transition-transform">
+            <span class="material-symbols-outlined" data-icon="precision_manufacturing">precision_manufacturing</span>
+            <span class="font-['Lexend'] text-[10px] font-medium">Fleet</span>
+        </button>
+        <button
+            class="flex flex-col items-center justify-center text-[#AF3E3E]/60 dark:text-stone-500 hover:text-[#CD5656] active:translate-y-0.5 transition-transform">
+            <span class="material-symbols-outlined" data-icon="settings">settings</span>
+            <span class="font-['Lexend'] text-[10px] font-medium">Settings</span>
+        </button>
+    </nav>
+</body>
+
+</html>

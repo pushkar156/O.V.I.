@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/chat", tags=["Chat"])
 
 class ChatRequest(BaseModel):
     message: str
-    conversation_id: Optional[str] = "default-session"
+    conversation_id: Optional[str] = None
     context: Optional[Dict[str, Any]] = None
 
 class ToolUsage(BaseModel):
@@ -34,7 +34,8 @@ async def chat_endpoint(request: ChatRequest):
     Processes intent, executes tools, and returns a natural language response.
     """
     logger.info(f"Received chat request: {request.message}")
-    conv_id = request.conversation_id or "default-session"
+    import uuid
+    conv_id = request.conversation_id if request.conversation_id else str(uuid.uuid4())
     
     # 1. Prepare context and instructions
     tool_defs = get_tool_definitions()
@@ -93,3 +94,30 @@ async def chat_endpoint(request: ChatRequest):
     except Exception as e:
         logger.error(f"Error in chat endpoint: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/sessions")
+async def get_chat_sessions():
+    """Retrieve all past chat conversations."""
+    conversations = await memory_manager.get_conversations()
+    return conversations
+
+@router.get("/history/{conversation_id}")
+async def get_chat_history(conversation_id: str):
+    """Retrieve message history for a specific conversation."""
+    history = await memory_manager.get_history(conversation_id, limit=50)
+    return history
+
+class UpdateTitleRequest(BaseModel):
+    title: str
+
+@router.patch("/sessions/{conversation_id}")
+async def update_session_title(conversation_id: str, request: UpdateTitleRequest):
+    """Update the title of a conversation."""
+    await memory_manager.update_conversation_title(conversation_id, request.title)
+    return {"status": "success"}
+
+@router.delete("/sessions/{conversation_id}")
+async def delete_session(conversation_id: str):
+    """Delete a conversation."""
+    await memory_manager.delete_conversation(conversation_id)
+    return {"status": "success"}
