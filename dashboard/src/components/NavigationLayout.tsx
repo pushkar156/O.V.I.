@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 
 export function NavigationLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
@@ -32,12 +33,27 @@ export function NavigationLayout({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Left Sidebar (Navigation) */}
-      <aside className={`h-screen w-64 border-r fixed left-0 top-0 border-[#AF3E3E]/10 dark:border-[#5b403d]/15 bg-[#EAEBD0] dark:bg-[#1c1b1b]/95 backdrop-blur-xl flex flex-col py-6 shadow-sm z-50 transition-transform duration-300 lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="px-6 mb-8 flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold font-['Public_Sans'] text-[#AF3E3E] dark:text-[#ffb3ae]">O.V.I. Command</h1>
-            <p className="font-['Lexend'] text-xs text-[#AF3E3E]/70 dark:text-white/40 uppercase tracking-widest">Operational Intelligence</p>
-          </div>
+      <aside className={`h-screen border-r fixed left-0 top-0 border-[#AF3E3E]/10 dark:border-[#5b403d]/15 bg-[#EAEBD0] dark:bg-[#1c1b1b]/95 backdrop-blur-xl flex flex-col py-6 shadow-sm z-50 transition-all duration-300 lg:translate-x-0 
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+        ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}>
+        
+        <div className={`px-6 mb-8 flex justify-between items-center ${isSidebarCollapsed ? 'px-4 flex-col gap-4' : ''}`}>
+          {!isSidebarCollapsed && (
+            <div>
+              <h1 className="text-xl font-bold font-['Public_Sans'] text-[#AF3E3E] dark:text-[#ffb3ae]">O.V.I. Command</h1>
+              <p className="font-['Lexend'] text-xs text-[#AF3E3E]/70 dark:text-white/40 uppercase tracking-widest">Operational Intelligence</p>
+            </div>
+          )}
+          
+          <button 
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className="hidden lg:flex p-1.5 rounded-lg hover:bg-[#DA6C6C]/10 dark:hover:bg-[#353534] text-[#AF3E3E] dark:text-[#ffb3ae] transition-colors"
+          >
+            <span className="material-symbols-outlined text-xl">
+              {isSidebarCollapsed ? 'side_navigation' : 'menu_open'}
+            </span>
+          </button>
+
           <button 
             className="lg:hidden text-[#AF3E3E] dark:text-[#ffb3ae] p-1"
             onClick={() => setIsSidebarOpen(false)}
@@ -45,6 +61,7 @@ export function NavigationLayout({ children }: { children: React.ReactNode }) {
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
+
         <nav className="flex-1 flex flex-col gap-1 px-3">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -53,14 +70,20 @@ export function NavigationLayout({ children }: { children: React.ReactNode }) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg mx-2 transition-colors font-['Lexend'] text-sm ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg mx-2 transition-all font-['Lexend'] text-sm relative group ${
                   isActive 
-                    ? 'text-[#CD5656] dark:text-[#fff2f0] font-bold border-r-4 border-[#CD5656] dark:border-transparent bg-[#DA6C6C]/10 dark:bg-[#cc3a3a]' 
+                    ? 'text-[#CD5656] dark:text-[#fff2f0] font-bold bg-[#DA6C6C]/10 dark:bg-[#cc3a3a]' 
                     : 'text-[#AF3E3E]/70 dark:text-[#a6bcc7] hover:bg-[#DA6C6C]/5 dark:hover:bg-[#353534] dark:hover:text-[#e5e2e1]'
-                }`}
+                } ${isSidebarCollapsed ? 'justify-center px-0 mx-1' : ''}`}
               >
                 <span className="material-symbols-outlined">{item.icon}</span>
-                <span>{item.name}</span>
+                {!isSidebarCollapsed && <span>{item.name}</span>}
+                
+                {isSidebarCollapsed && (
+                    <div className="absolute left-full ml-4 px-2 py-1 bg-[#1c1b1b] text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-[60]">
+                        {item.name}
+                    </div>
+                )}
               </Link>
             );
           })}
@@ -85,7 +108,7 @@ export function NavigationLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Top Header */}
-      <header className="h-16 w-full fixed top-0 z-30 border-b border-[#AF3E3E]/10 dark:border-[#5b403d]/15 bg-[#EAEBD0]/95 dark:bg-[#131313]/95 backdrop-blur-md flex justify-between items-center px-4 lg:px-6 lg:pl-72 transition-colors duration-300">
+      <header className={`h-16 w-full fixed top-0 z-30 border-b border-[#AF3E3E]/10 dark:border-[#5b403d]/15 bg-[#EAEBD0]/95 dark:bg-[#131313]/95 backdrop-blur-md flex justify-between items-center px-4 lg:px-6 transition-all duration-300 ${isSidebarCollapsed ? 'lg:pl-24' : 'lg:pl-72'}`}>
         <div className="flex items-center gap-3">
           <button 
             className="lg:hidden p-2 text-[#AF3E3E] dark:text-[#ffb3ae]"
@@ -122,7 +145,7 @@ export function NavigationLayout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Main Content Wrapper */}
-      <div className="pt-16 lg:ml-64 min-h-screen flex flex-col">
+      <div className={`pt-16 transition-all duration-300 min-h-screen flex flex-col ${isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'}`}>
         {children}
       </div>
     </>

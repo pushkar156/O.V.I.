@@ -81,5 +81,33 @@ class ShortTermMemory:
                 logger.error(f"Failed to list conversations: {e}")
                 return []
 
+    async def update_conversation_title(self, conversation_id: str, new_title: str):
+        """Updates the title of an existing conversation."""
+        async with AsyncSessionLocal() as session:
+            try:
+                stmt = select(Conversation).where(Conversation.id == conversation_id)
+                result = await session.execute(stmt)
+                conv = result.scalar_one_or_none()
+                if conv:
+                    conv.title = new_title
+                    await session.commit()
+            except Exception as e:
+                logger.error(f"Failed to update conversation title: {e}")
+                await session.rollback()
+
+    async def delete_conversation(self, conversation_id: str):
+        """Deletes a conversation and all its messages."""
+        async with AsyncSessionLocal() as session:
+            try:
+                # SQLAlchemy's cascade should handle messages if configured, 
+                # but we'll do it explicitly if needed or rely on schema.
+                from sqlalchemy import delete
+                stmt = delete(Conversation).where(Conversation.id == conversation_id)
+                await session.execute(stmt)
+                await session.commit()
+            except Exception as e:
+                logger.error(f"Failed to delete conversation: {e}")
+                await session.rollback()
+
 # Global instance
 memory_manager = ShortTermMemory()

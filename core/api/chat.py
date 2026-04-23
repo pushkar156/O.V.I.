@@ -106,3 +106,18 @@ async def get_chat_history(conversation_id: str):
     """Retrieve message history for a specific conversation."""
     history = await memory_manager.get_history(conversation_id, limit=50)
     return history
+
+class UpdateTitleRequest(BaseModel):
+    title: str
+
+@router.patch("/sessions/{conversation_id}")
+async def update_session_title(conversation_id: str, request: UpdateTitleRequest):
+    """Update the title of a conversation."""
+    await memory_manager.update_conversation_title(conversation_id, request.title)
+    return {"status": "success"}
+
+@router.delete("/sessions/{conversation_id}")
+async def delete_session(conversation_id: str):
+    """Delete a conversation."""
+    await memory_manager.delete_conversation(conversation_id)
+    return {"status": "success"}

@@ -7,10 +7,39 @@ import { oviClient } from "@/lib/ovi-client";
 export default function ChatPage() {
   const [sessions, setSessions] = useState<{id: string, title: string, created_at: string}[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | undefined>();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+
+  const refreshSessions = () => {
+    oviClient.getChatSessions().then(setSessions).catch(console.error);
+  };
 
   useEffect(() => {
-    oviClient.getChatSessions().then(setSessions).catch(console.error);
+    refreshSessions();
   }, []);
+
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (confirm("Delete this conversation?")) {
+      await oviClient.deleteChatSession(id);
+      if (activeSessionId === id) setActiveSessionId(undefined);
+      refreshSessions();
+    }
+  };
+
+  const handleStartEdit = (e: React.MouseEvent, session: any) => {
+    e.stopPropagation();
+    setEditingId(session.id);
+    setEditTitle(session.title);
+  };
+
+  const handleSaveEdit = async (id: string) => {
+    if (editTitle.trim()) {
+      await oviClient.updateChatTitle(id, editTitle);
+      setEditingId(null);
+      refreshSessions();
+    }
+  };
 
   return (
     <main className="p-4 lg:p-6 h-[calc(100vh-64px)] flex gap-6 overflow-hidden flex-1">
@@ -28,16 +57,37 @@ export default function ChatPage() {
         
         <div className="flex-1 overflow-y-auto scrollbar-hide space-y-2 pb-4">
             {sessions.map(session => (
-                <button 
-                    key={session.id} 
-                    onClick={() => setActiveSessionId(session.id)}
-                    className={`w-full text-left p-3 rounded-xl transition-colors text-sm font-body truncate border ${
-                        activeSessionId === session.id 
-                            ? 'bg-[#CD5656]/10 dark:bg-[#cc3a3a]/20 text-[#CD5656] dark:text-[#ffb3ae] border-[#CD5656]/30' 
-                            : 'hover:bg-surface-variant dark:hover:bg-[#353534] text-on-surface dark:text-[#e5e2e1]/80 border-transparent hover:border-[#AF3E3E]/10 dark:hover:border-[#5b403d]/30'
-                    }`}>
-                    {session.title}
-                </button>
+                <div 
+                    key={session.id}
+                    className="relative group"
+                >
+                    {editingId === session.id ? (
+                        <div className="flex items-center gap-2 p-2 bg-surface-variant dark:bg-[#353534] rounded-xl border border-[#AF3E3E]/20">
+                            <input 
+                                autoFocus
+                                className="bg-transparent border-none outline-none text-xs w-full text-on-surface dark:text-[#e5e2e1]"
+                                value={editTitle}
+                                onChange={(e) => setEditTitle(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit(session.id)}
+                            />
+                            <button onClick={() => handleSaveEdit(session.id)} className="text-[#CD5656]"><span className="material-symbols-outlined text-sm">check</span></button>
+                        </div>
+                    ) : (
+                        <button 
+                            onClick={() => setActiveSessionId(session.id)}
+                            className={`w-full text-left p-3 rounded-xl transition-all text-sm font-body truncate border flex items-center justify-between ${
+                                activeSessionId === session.id 
+                                    ? 'bg-[#CD5656]/10 dark:bg-[#cc3a3a]/20 text-[#CD5656] dark:text-[#ffb3ae] border-[#CD5656]/30' 
+                                    : 'hover:bg-surface-variant dark:hover:bg-[#353534] text-on-surface dark:text-[#e5e2e1]/80 border-transparent hover:border-[#AF3E3E]/10 dark:hover:border-[#5b403d]/30'
+                            }`}>
+                            <span className="truncate flex-1">{session.title}</span>
+                            <div className="hidden group-hover:flex items-center gap-1">
+                                <span onClick={(e) => handleStartEdit(e, session)} className="material-symbols-outlined text-xs hover:text-[#CD5656] cursor-pointer">edit</span>
+                                <span onClick={(e) => handleDelete(e, session.id)} className="material-symbols-outlined text-xs hover:text-[#CD5656] cursor-pointer">delete</span>
+                            </div>
+                        </button>
+                    )}
+                </div>
             ))}
             {sessions.length === 0 && (
                 <div className="text-center mt-10">
