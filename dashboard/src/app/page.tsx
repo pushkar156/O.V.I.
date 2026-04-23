@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { SystemHUD } from "@/components/SystemHUD";
 import { OVIChat } from "@/components/OVIChat";
+import { DeviceStatus } from "@/components/DeviceStatus";
 
 export default function DashboardPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -143,23 +144,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Right Sidebar (System Vitals) */}
+        {/* Right Sidebar (System Vitals & Fleet) */}
         <aside className="w-full xl:w-80 flex flex-col gap-6 shrink-0 xl:overflow-y-auto scrollbar-hide xl:pb-4">
           <SystemHUD />
-
-          <section className="flex-1 bg-[#CD5656] dark:bg-surface-container-lowest dark:border dark:border-[#5b403d]/15 rounded-2xl p-6 text-white relative overflow-hidden group min-h-[200px]">
-            <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-              <span className="material-symbols-outlined text-[120px] dark:text-[#ffb3ae]" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
-            </div>
-            <div className="relative z-10">
-              <span className="inline-block px-3 py-1 rounded-full bg-white/20 dark:bg-[#353534] text-[10px] font-bold uppercase tracking-widest mb-4 dark:text-primary">Daily Insight</span>
-              <h4 className="font-headline text-xl font-bold mb-3 leading-tight dark:text-[#e5e2e1]">Neural patterns suggest 12% optimization in data routing.</h4>
-              <p className="font-body text-sm text-white/80 dark:text-[#a6bcc7] mb-6">Review the latest fleet telemetry to apply these changes automatically.</p>
-              <button className="w-full bg-white dark:bg-[#ffb3ae] text-[#CD5656] dark:text-[#131313] py-3 rounded-lg font-label font-bold text-xs hover:bg-[#EAEBD0] dark:hover:bg-[#ffdad7] transition-colors mt-auto shadow-md">
-                  OPTIMIZE NOW
-              </button>
-            </div>
-          </section>
+          <DeviceStatus />
 
           <div className="bg-surface-container-highest dark:bg-[#1c1b1b] dark:border dark:border-[#5b403d]/15 p-4 rounded-xl flex items-center gap-3">
             <div className="h-2.5 w-2.5 bg-green-500 dark:bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>

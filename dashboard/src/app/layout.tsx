@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { NavigationLayout } from "@/components/NavigationLayout";
 
 export default function RootLayout({
   children,
@@ -26,7 +27,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <NavigationLayout>
+            {children}
+          </NavigationLayout>
         </ThemeProvider>
       </body>
     </html>
