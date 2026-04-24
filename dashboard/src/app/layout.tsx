@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { NavigationLayout } from "@/components/NavigationLayout";
+import { ChatProvider } from "@/context/ChatContext";
 
 export default function RootLayout({
   children,
@@ -27,9 +28,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NavigationLayout>
-            {children}
-          </NavigationLayout>
+          <ChatProvider>
+            <NavigationLayout>
+              {children}
+            </NavigationLayout>
+          </ChatProvider>
         </ThemeProvider>
       </body>
     </html>

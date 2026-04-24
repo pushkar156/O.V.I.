@@ -100,6 +100,12 @@ class OVIAgent:
             elif cmd_type == "open_app":
                 open_local_app(command_data.get("app_name"))
                 result["success"] = True
+                
+            elif cmd_type == "play_sound":
+                import winsound
+                # Play a system beep or a specific frequency
+                winsound.Beep(1000, 1000) # 1000Hz for 1 second
+                result["success"] = True
             
             # Send result back to core
             response = {
