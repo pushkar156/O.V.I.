@@ -101,6 +101,11 @@ class OVIAgent:
                 open_local_app(command_data.get("app_name"))
                 result["success"] = True
                 
+            elif cmd_type == "open_url":
+                from agent.local_tools import open_local_url
+                open_local_url(command_data.get("url"))
+                result["success"] = True
+                
             elif cmd_type == "play_sound":
                 import winsound
                 # Play a system beep or a specific frequency

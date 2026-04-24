@@ -72,10 +72,29 @@ class PingDeviceTool(BaseTool):
             return {"status": "success", "message": f"Ping sent to {device_name}."}
         return {"status": "error", "message": f"Device '{device_name}' is not responsive."}
 
+class RemoteBrowserTool(BaseTool):
+    name = "open_remote_url"
+    description = "Opens a specific URL/Website in the default browser of a CONNECTED AGENT."
+    parameters = {
+        "type": "object",
+        "properties": {
+            "device_name": {"type": "string", "description": "Target device name."},
+            "url": {"type": "string", "description": "The URL to open (e.g. 'https://google.com')."}
+        },
+        "required": ["device_name", "url"]
+    }
+
+    async def execute(self, device_name: str, url: str) -> Dict[str, Any]:
+        success = await agent_registry.send_command(device_name, "open_url", {"url": url})
+        if success:
+            return {"status": "success", "message": f"Opening {url} on {device_name}."}
+        return {"status": "error", "message": f"Could not reach {device_name}."}
+
 # List of cross-device tools to register
 CROSS_DEVICE_TOOLS = [
     RemoteScreenshotTool(),
     RemoteSystemInfoTool(),
     RemoteAppControlTool(),
-    PingDeviceTool()
+    PingDeviceTool(),
+    RemoteBrowserTool()
 ]

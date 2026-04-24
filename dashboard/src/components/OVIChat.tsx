@@ -16,6 +16,7 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
   const [messages, setMessages] = useState<Message[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const [volume, setVolume] = useState(0);
+  const [currentConvId, setCurrentConvId] = useState<string | undefined>(conversationId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -24,10 +25,15 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
 
   useEffect(scrollToBottom, [messages]);
 
-  // Load History when conversationId changes
+  // Sync internal ID with prop
   useEffect(() => {
-    if (conversationId) {
-      oviClient.getChatHistory(conversationId).then(history => {
+    setCurrentConvId(conversationId);
+  }, [conversationId]);
+
+  // Load History when internal ID changes
+  useEffect(() => {
+    if (currentConvId) {
+      oviClient.getChatHistory(currentConvId).then(history => {
         const formatted: Message[] = history.map((h: any, i: number) => ({
           id: `hist-${i}`,
           role: h.role,
@@ -38,15 +44,14 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
     } else {
       setMessages([]);
     }
-  }, [conversationId]);
+  }, [currentConvId]);
 
   const toggleRecording = async () => {
     if (isRecording) {
       setIsRecording(false);
       setVolume(0);
       const audioBlob = await oviClient.stopRecording();
-      // Here we would upload audioBlob to /api/voice
-      // For now, let's just simulate the transcription arriving:
+      // Simulation:
       const userMsg: Message = { id: Date.now().toString(), role: 'user', content: "Voice command received." };
       setMessages(prev => [...prev, userMsg]);
 
@@ -69,11 +74,13 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
     setInput("");
 
     try {
-      // Show an immediate processing indicator if desired, or just wait for the real response
-      const response = await oviClient.chat(input, conversationId);
+      // Use the internal currentConvId to ensure we stay in the same thread
+      const response = await oviClient.chat(input, currentConvId);
 
-      if (!conversationId && onNewConversation && response.conversation_id) {
-        onNewConversation(response.conversation_id);
+      // Lock the ID immediately if this was a new conversation
+      if (!currentConvId && response.conversation_id) {
+        setCurrentConvId(response.conversation_id);
+        if (onNewConversation) onNewConversation(response.conversation_id);
       }
 
       const aiMsg: Message = {
@@ -88,49 +95,39 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
       const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "Error: Neural Link Offline. I cannot reach the Ollama inference engine. Please ensure Ollama is installed and running."
+        content: "Error: Neural Link Offline."
       };
       setMessages(prev => [...prev, errorMsg]);
     }
   };
 
-  // Calculate dynamic heights based on base volume + some math math to make it look like a waveform
   const getBarHeight = (index: number) => {
     if (!isRecording) {
-      // Idle state heights
       const idleHeights = [8, 16, 24, 12, 32, 18, 12];
       return idleHeights[index];
     }
-    // Dynamic height based on volume and index
     const baseHeight = 12;
-    const modifier = Math.sin((index + 1) * Math.PI / 4) * 0.5 + 0.5; // Creates a curve
+    const modifier = Math.sin((index + 1) * Math.PI / 4) * 0.5 + 0.5;
     const dynamicHeight = Math.max(baseHeight, volume * 1.5 * modifier);
-    return Math.min(100, dynamicHeight); // Cap at 100px
+    return Math.min(100, dynamicHeight);
   };
 
   return (
     <section className="flex-1 h-full bg-surface-container-lowest dark:bg-[#1c1b1b] rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex flex-col relative overflow-hidden transition-colors duration-300">
-      {/* Background Glow */}
       <div className="absolute inset-0 opacity-10 dark:opacity-20 pointer-events-none transition-all duration-300 dark:bg-[radial-gradient(circle_at_50%_50%,_#ffb3ae_0%,_transparent_70%)]" style={{ backgroundImage: "radial-gradient(circle at 50% 50%, #CD5656 0%, transparent 70%)" }}></div>
 
-      {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto z-10 px-4 md:px-8 pt-8 pb-32 flex flex-col scrollbar-hide">
         {messages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center relative">
-
-            {/* The Massive Audio-Reactive Orb */}
             <motion.div
               onClick={toggleRecording}
-              animate={{
-                scale: isRecording ? 1 + (volume / 200) : 1, // Scales up to 1.5x based on volume
-              }}
+              animate={{ scale: isRecording ? 1 + (volume / 200) : 1 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               className={`relative mb-8 rounded-full cursor-pointer flex items-center justify-center transition-all duration-300 ${isRecording
                   ? 'w-48 h-48 bg-[#CD5656]/20 dark:bg-[#ffb3ae]/10 shadow-[0_0_100px_rgba(205,86,86,0.3)] dark:shadow-[0_0_100px_rgba(255,179,174,0.2)]'
                   : 'w-32 h-32 bg-[#CD5656]/5 dark:bg-[#ffb3ae]/5 hover:scale-105 shadow-[0_0_40px_rgba(205,86,86,0.1)] dark:shadow-[0_0_40px_rgba(255,179,174,0.05)]'
                 }`}
             >
-              {/* Inner Glowing Core */}
               <motion.div
                 animate={{
                   scale: isRecording ? 1 + (volume / 100) : 1,
@@ -139,14 +136,10 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
                 className={`absolute w-full h-full rounded-full blur-xl transition-colors duration-300 ${isRecording ? 'bg-[#CD5656] dark:bg-[#cc3a3a]' : 'bg-[#CD5656]/40 dark:bg-[#ffb3ae]/40'
                   }`}
               />
-
-              {/* Center Mic Icon */}
               <span className={`material-symbols-outlined text-5xl relative z-10 transition-colors duration-300 ${isRecording ? 'text-white dark:text-[#fff2f0]' : 'text-[#CD5656] dark:text-[#ffb3ae]'
                 }`}>
                 mic
               </span>
-
-              {/* Dynamic Waveform Rings (only when recording) */}
               <AnimatePresence>
                 {isRecording && (
                   <motion.div
@@ -192,8 +185,7 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
         )}
       </div>
 
-      {/* Input Bar */}
-      <div className="absolute bottom-4 md:bottom-8 left-4 md:left-8 right-4 md:right-8 z-20">
+      <div className="absolute bottom-4 md:bottom-8 left-4 md:left-8 right-4 md:left-8 z-20">
         <form onSubmit={handleSubmit} className="bg-surface-container dark:bg-[#201f1f] rounded-xl p-2 flex items-center gap-2 md:gap-4 shadow-xl border border-[#AF3E3E]/10 dark:border-[#5b403d]/15">
           <button
             type="button"

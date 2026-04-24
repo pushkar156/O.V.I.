@@ -36,7 +36,13 @@ async def chat_endpoint(request: ChatRequest):
     """
     logger.info(f"Received chat request: {request.message}")
     import uuid
-    conv_id = request.conversation_id if request.conversation_id else str(uuid.uuid4())
+    # If no ID provided, try to find the most recent active session for this 'user'
+    # For now, we'll stick to a stricter check: if not provided, generate ONE and keep it.
+    conv_id = request.conversation_id
+    if not conv_id:
+        # Check if we have an 'active' session in memory we can reuse? 
+        # For simplicity, we'll let the frontend handle the 'stickiness' better.
+        conv_id = str(uuid.uuid4())
     
     # 1. Prepare context and instructions
     context = request.context or {}

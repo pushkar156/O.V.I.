@@ -3,6 +3,7 @@ import pyautogui
 import os
 import platform
 import subprocess
+import webbrowser
 from typing import Dict, Any
 
 def get_local_system_info() -> Dict[str, Any]:
@@ -29,6 +30,10 @@ def open_local_app(app_name: str):
         subprocess.Popen(["open", "-a", app_name])
     else:  # Linux
         subprocess.Popen([app_name])
+
+def open_local_url(url: str):
+    """Open a URL in the default browser on this specific device."""
+    webbrowser.open(url)
 
 def get_recent_files(limit: int = 5) -> list:
     """List recently modified files in the user's home directory (simulated)."""
