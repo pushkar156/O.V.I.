@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Monitor, Smartphone, Laptop, Zap, RefreshCw, MoreVertical, Shield } from 'lucide-react';
+import { Monitor, Smartphone, Laptop, RefreshCw, ChevronRight, Activity } from 'lucide-react';
 import { oviMobile } from '../lib/api';
 
 const MeshControl = () => {
@@ -25,17 +25,23 @@ const MeshControl = () => {
 
   return (
     <div className="h-full flex flex-col p-6 overflow-y-auto pb-32">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold font-['Sora'] text-white">Active Mesh</h2>
-        <button onClick={fetchDevices} className="p-2 glass rounded-lg text-[#CD5656]">
-          <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+      <div className="flex justify-between items-end mb-8 px-2">
+        <div>
+          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#AF3E3E] mb-1">Fleet Management</p>
+          <h2 className="text-xl font-bold font-['Sora'] text-white">Device Mesh</h2>
+        </div>
+        <button 
+          onClick={fetchDevices} 
+          className="w-10 h-10 rounded-xl bg-[#2a2a2a] border border-[#AF3E3E]/20 flex items-center justify-center text-[#ffb3ae]"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </div>
 
       <div className="space-y-4">
-        {/* Primary Desktop (Local) */}
+        {/* Local Station */}
         <DeviceCard 
-          name="Main Station" 
+          name="Core Station" 
           type="desktop" 
           status="online" 
           vitals={{ cpu: '12%', ram: '8GB' }}
@@ -53,23 +59,28 @@ const MeshControl = () => {
         ))}
 
         {devices.length === 0 && !loading && (
-          <div className="p-10 border border-dashed border-white/10 rounded-3xl text-center">
-            <p className="text-white/20 text-xs font-bold uppercase tracking-widest">No remote agents found</p>
+          <div className="p-12 border border-dashed border-[#AF3E3E]/20 rounded-3xl text-center bg-[#AF3E3E]/5">
+            <Activity className="w-8 h-8 text-[#AF3E3E]/30 mx-auto mb-3" />
+            <p className="text-[#ffb3ae]/20 text-[9px] font-black uppercase tracking-widest">No remote agents synchronized</p>
           </div>
         )}
       </div>
 
-      {/* Security Quick Actions */}
-      <div className="mt-10">
-        <h3 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4 px-2">Global Protocols</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <button className="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl flex flex-col items-center gap-2">
-            <Shield className="w-6 h-6 text-red-500" />
-            <span className="text-[10px] font-bold text-red-500 uppercase">Panic Lock</span>
-          </button>
-          <button className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-2xl flex flex-col items-center gap-2">
-            <Zap className="w-6 h-6 text-blue-500" />
-            <span className="text-[10px] font-bold text-blue-500 uppercase">Flush Cache</span>
+      {/* PC Style Action Buttons */}
+      <div className="mt-10 space-y-3">
+        <h3 className="text-[9px] font-black uppercase tracking-widest text-[#AF3E3E] mb-4 px-2">System Protocols</h3>
+        <div className="grid grid-cols-1 gap-3">
+          <button className="bg-[#AF3E3E]/10 border border-[#AF3E3E]/20 p-5 rounded-2xl flex items-center justify-between group">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-[#AF3E3E] rounded-lg text-white">
+                <RefreshCw className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <span className="block text-xs font-bold text-white uppercase">Sync Fleet</span>
+                <span className="block text-[8px] text-[#ffb3ae]/40 font-bold uppercase tracking-tighter">Update all agent configs</span>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-[#AF3E3E]" />
           </button>
         </div>
       </div>
@@ -77,27 +88,35 @@ const MeshControl = () => {
   );
 };
 
-function DeviceCard({ name, type, status, vitals }: any) {
+function DeviceCard({ name, type, vitals }: any) {
   const Icon = type === 'desktop' ? Monitor : type === 'laptop' ? Laptop : Smartphone;
   
   return (
     <motion.div 
       whileTap={{ scale: 0.98 }}
-      className="glass p-5 rounded-3xl flex items-center gap-4"
+      className="bg-[#2a2a2a] border border-[#AF3E3E]/10 p-5 rounded-2xl flex items-center gap-4 relative overflow-hidden"
     >
-      <div className="w-12 h-12 rounded-2xl bg-[#CD5656]/10 flex items-center justify-center text-[#CD5656]">
-        <Icon className="w-6 h-6" />
+      <div className="absolute top-0 left-0 w-1 h-full bg-[#AF3E3E]" />
+      <div className="w-12 h-12 rounded-xl bg-[#AF3E3E]/10 flex items-center justify-center text-[#ffb3ae] border border-[#AF3E3E]/5">
+        <Icon className="w-5 h-5" />
       </div>
       <div className="flex-1">
-        <h4 className="font-bold text-sm text-white">{name}</h4>
-        <div className="flex gap-3 mt-1">
-          <span className="text-[10px] text-white/40 font-bold uppercase tracking-tighter">CPU: {vitals.cpu}</span>
-          <span className="text-[10px] text-white/40 font-bold uppercase tracking-tighter">RAM: {vitals.ram}</span>
+        <div className="flex items-center gap-2">
+          <h4 className="font-bold text-sm text-white tracking-tight">{name}</h4>
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
+        </div>
+        <div className="flex gap-4 mt-1.5">
+          <div className="flex flex-col">
+            <span className="text-[7px] text-[#AF3E3E] font-black uppercase tracking-widest mb-0.5">LOAD</span>
+            <span className="text-[10px] text-[#ffb3ae]/60 font-bold">{vitals.cpu}</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[7px] text-[#AF3E3E] font-black uppercase tracking-widest mb-0.5">MEM</span>
+            <span className="text-[10px] text-[#ffb3ae]/60 font-bold">{vitals.ram}</span>
+          </div>
         </div>
       </div>
-      <button className="p-2 hover:bg-white/5 rounded-full text-white/40">
-        <MoreVertical className="w-5 h-5" />
-      </button>
+      <ChevronRight className="w-4 h-4 text-white/10" />
     </motion.div>
   );
 }
