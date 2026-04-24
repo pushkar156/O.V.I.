@@ -4,11 +4,32 @@ import React from 'react';
 import { Tablet, Laptop, Smartphone, Dot } from 'lucide-react';
 
 export const DeviceStatus: React.FC = () => {
-    const devices = [
+    const [devices, setDevices] = React.useState<any[]>([
         { name: "OVI-Desktop (Host)", type: "desktop", status: "online", icon: Laptop },
-        { name: "Pixel 8 Pro", type: "mobile", status: "online", icon: Smartphone },
-        { name: "Kitchen-Hub", type: "tablet", status: "offline", icon: Tablet },
-    ];
+    ]);
+
+    React.useEffect(() => {
+        const handleMessage = (data: any) => {
+            if (data.type === "stats") {
+                const { agents } = data.payload;
+                const activeAgents = agents.map((agent: any) => ({
+                    name: agent.name,
+                    type: agent.capabilities.includes("mobile") ? "mobile" : "laptop",
+                    status: "online",
+                    icon: agent.capabilities.includes("mobile") ? Smartphone : Laptop
+                }));
+
+                setDevices([
+                    { name: "OVI-Desktop (Host)", type: "desktop", status: "online", icon: Laptop },
+                    ...activeAgents
+                ]);
+            }
+        };
+
+        import("@/lib/ovi-client").then(({ oviClient }) => {
+            oviClient.onMessage(handleMessage);
+        });
+    }, []);
 
     return (
         <section className="bg-surface-container dark:bg-[#201f1f] p-6 rounded-2xl border border-[#AF3E3E]/10 dark:border-[#5b403d]/15 shadow-sm transition-colors duration-300">
