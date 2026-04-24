@@ -25,9 +25,9 @@ class PromptBuilder:
     def _get_persona_section(self) -> str:
         return (
             f"You are {self.persona_name} ({self.persona_full}), a highly advanced, local AI assistant. "
-            "Your tone is professional, efficient, and helpful, with a subtle hint of wit. "
-            "You run entirely on the user's local hardware—privacy and speed are your core principles. "
-            "You don't just chat; you execute actions to help the user manage their digital life."
+            "You are the BRAIN of a multi-device mesh. You control the local machine AND any connected AGENTS. "
+            "If a user mentions a device that appears in your 'Connected Agents' list, you MUST use the corresponding remote/cross-device tools. "
+            "Your tone is professional, efficient, and helpful, with a subtle hint of wit."
         )
 
     def _get_tools_section(self, tools: List[Dict[str, Any]]) -> str:
@@ -47,25 +47,30 @@ class PromptBuilder:
         current_time = now.strftime("%Y-%m-%d %H:%M:%S")
         
         device_info = context.get("devices", "Primary Desktop")
+        agents = context.get("agents", [])
+        agent_names = " | ".join([f"[{a['name'].upper()}]" for a in agents]) if agents else "NONE"
         
         return (
-            "### CURRENT CONTEXT\n"
+            "### NETWORK STATUS\n"
             f"- Current Time: {current_time}\n"
-            f"- Active Device: {device_info}\n"
-            f"- Connected Agents: {context.get('agent_count', 0)}\n"
-            f"- User Preferences: {context.get('preferences', 'None set.')}"
+            f"- Primary Device: {device_info}\n"
+            f"- CONNECTED AGENTS: {agent_names}\n"
+            f"- (Use 'capture_remote_screen', 'ping_device', etc. for these agents)\n\n"
+            f"### USER PREFERENCES\n"
+            f"- {context.get('preferences', 'None set.')}"
         )
 
     def _get_output_formatting_section(self) -> str:
         return (
-            "### OUTPUT FORMATTING\n"
-            "1. **Direct Communication**: Reply naturally if no action is needed.\n"
-            "2. **Tool Use**: If you need to perform an action, you MUST include a JSON block in the following format:\n"
-            "   ```json\n"
-            '   { "tool": "tool_name", "args": { "arg1": "value" } }\n'
-            "   ```\n"
-            "3. **Multi-Step**: You can chain thoughts, but only call one tool at a time unless they are independent.\n"
-            "4. **Safety**: Never execute destructive commands without confirming if they seem suspicious."
+            "### OUTPUT FORMATTING & EXAMPLES\n"
+            "You MUST use tools for mesh operations. Here are examples:\n\n"
+            "User: 'Ping my laptop-agent'\n"
+            "Assistant: I'll ping that device for you now. ```json { \"tool\": \"ping_device\", \"args\": { \"device_name\": \"laptop-agent\" } } ```\n\n"
+            "User: 'What is on my laptop screen?'\n"
+            "Assistant: Capturing the remote screen now. ```json { \"tool\": \"capture_remote_screen\", \"args\": { \"device_name\": \"laptop-agent\" } } ```\n\n"
+            "User: 'Check laptop stats'\n"
+            "Assistant: Checking remote vitals. ```json { \"tool\": \"get_remote_status\", \"args\": { \"device_name\": \"laptop-agent\" } } ```\n\n"
+            "IMPORTANT: Always use the exact name from the CONNECTED AGENTS list. Never guess file paths like '/sys/class/net' or '~/.config'."
         )
 
 # Global instance

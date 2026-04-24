@@ -1,0 +1,6 @@
+{
+  "device_name": "laptop-agent",
+  "core_url": "ws://localhost:8000/ws/agent",
+  "capabilities": ["screenshot", "system_info", "app_control", "file_ops"],
+  "auto_start": true
+}

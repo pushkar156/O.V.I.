@@ -3,6 +3,7 @@ from typing import List, Dict, Any
 from loguru import logger
 import json
 import time
+from core.agents.agent_registry import agent_registry
 
 router = APIRouter(prefix="/ws", tags=["WebSocket"])
 
@@ -39,13 +40,21 @@ class ConnectionManager:
                 pass
 
     async def broadcast_stats(self):
-        """Fetches and broadcasts real-time system stats."""
+        """Fetches and broadcasts real-time system stats (local + agents)."""
         from core.api.devices import get_system_stats
         if not self.active_connections:
             return
             
-        stats = await get_system_stats()
-        await self.broadcast({"type": "stats", "payload": stats})
+        local_stats = await get_system_stats()
+        agents = agent_registry.get_online_agents()
+        
+        await self.broadcast({
+            "type": "stats", 
+            "payload": {
+                "local": local_stats,
+                "agents": agents
+            }
+        })
 
 manager = ConnectionManager()
 
@@ -73,5 +82,43 @@ async def websocket_dashboard(websocket: WebSocket):
     except WebSocketDisconnect:
         manager.disconnect(websocket)
     except Exception as e:
-        logger.error(f"WebSocket error: {e}")
+        logger.error(f"WebSocket error in dashboard: {e}")
         manager.disconnect(websocket)
+
+@router.websocket("/agent")
+async def websocket_agent(websocket: WebSocket):
+    """Endpoint for secondary device agents (laptops, etc.) to connect."""
+    await websocket.accept()
+    agent_name = "unknown"
+    
+    try:
+        while True:
+            data = await websocket.receive_text()
+            payload = json.loads(data)
+            msg_type = payload.get("type")
+            
+            if msg_type == "register":
+                agent_name = payload.get("source", "unknown")
+                agent_registry.register(
+                    name=agent_name,
+                    websocket=websocket,
+                    capabilities=payload.get("data", {}).get("capabilities", []),
+                    system_info=payload.get("data", {}).get("system_info", {})
+                )
+                await websocket.send_json({"type": "ack", "status": "registered"})
+                
+            elif msg_type == "heartbeat":
+                agent_name = payload.get("source", "unknown")
+                agent_registry.update_heartbeat(agent_name)
+                
+            elif msg_type == "result":
+                # Handle command results (could be forwarded to dashboard or memory)
+                logger.info(f"Received result from agent {agent_name}: {payload.get('data')}")
+                # Broadcast result to dashboard so it can show success
+                await manager.broadcast({"type": "agent_result", "payload": payload})
+                
+    except WebSocketDisconnect:
+        agent_registry.unregister(agent_name)
+    except Exception as e:
+        logger.error(f"WebSocket error in agent {agent_name}: {e}")
+        agent_registry.unregister(agent_name)

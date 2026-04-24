@@ -138,8 +138,8 @@ All devices synced magically  →    WebSocket mesh over local Wi-Fi
 │              │   (FastAPI + WS Hub)    │    at 192.168.x.x:8000  │
 │              │                         │                          │
 │              │  ┌───────────────────┐  │                          │
-│              │  │  Ollama LLM       │  │  Qwen3 / Mistral /     │
-│              │  │  (localhost:11434) │  │  Llama3 / Gemma3       │
+│              │  │  Ollama LLM       │  │  qwen2.5:1.5b /       │
+│              │  │  (localhost:11434) │  │  Mistral / Llama3     │
 │              │  └───────────────────┘  │                          │
 │              │  ┌───────────────────┐  │                          │
 │              │  │  Tool Router      │  │  Maps intent → actions  │
@@ -165,7 +165,7 @@ All devices synced magically  →    WebSocket mesh over local Wi-Fi
 
 | Layer | Technology | Purpose |
 |:------|:-----------|:--------|
-| **LLM Engine** | Ollama + Qwen3 8B / Mistral 7B | Brain — reasoning & generation |
+| **LLM Engine** | Ollama + qwen2.5:1.5b | Brain — reasoning & generation |
 | **STT** | faster-whisper (local) | Speech-to-text transcription |
 | **TTS** | edge-tts | Natural voice synthesis |
 | **Wake Word** | openWakeWord | *"Hey O.V.I."* detection |
@@ -279,7 +279,7 @@ ovi/
 ```bash
 # Download from https://ollama.com/download
 # Then pull a model:
-ollama pull qwen3:8b
+ollama pull qwen2.5:1.5b
 ```
 
 ### 2. Clone & Setup

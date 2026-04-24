@@ -8,6 +8,7 @@ from core.llm.prompt_builder import prompt_builder
 from core.llm.tool_router import tool_router
 from core.tools import get_tool_definitions
 from core.memory.short_term import memory_manager
+from core.agents.agent_registry import agent_registry
 
 router = APIRouter(prefix="/api/chat", tags=["Chat"])
 
@@ -35,11 +36,24 @@ async def chat_endpoint(request: ChatRequest):
     """
     logger.info(f"Received chat request: {request.message}")
     import uuid
-    conv_id = request.conversation_id if request.conversation_id else str(uuid.uuid4())
+    # If no ID provided, try to find the most recent active session for this 'user'
+    # For now, we'll stick to a stricter check: if not provided, generate ONE and keep it.
+    conv_id = request.conversation_id
+    if not conv_id:
+        # Check if we have an 'active' session in memory we can reuse? 
+        # For simplicity, we'll let the frontend handle the 'stickiness' better.
+        conv_id = str(uuid.uuid4())
     
     # 1. Prepare context and instructions
+    context = request.context or {}
+    
+    # Inject live agents into context
+    online_agents = agent_registry.get_online_agents()
+    context["agents"] = online_agents
+    context["agent_count"] = len(online_agents)
+    
     tool_defs = get_tool_definitions()
-    system_prompt = prompt_builder.build_system_prompt(tools=tool_defs, context=request.context)
+    system_prompt = prompt_builder.build_system_prompt(tools=tool_defs, context=context)
     
     # 2. Load History
     history = await memory_manager.get_history(conv_id)

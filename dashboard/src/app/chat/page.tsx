@@ -3,20 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { OVIChat } from "@/components/OVIChat";
 import { oviClient } from "@/lib/ovi-client";
+import { useChat } from "@/context/ChatContext";
 
 export default function ChatPage() {
-  const [sessions, setSessions] = useState<{ id: string, title: string, created_at: string }[]>([]);
-  const [activeSessionId, setActiveSessionId] = useState<string | undefined>();
+  const { sessions, activeSessionId, setActiveSessionId, refreshSessions } = useChat();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
-
-  const refreshSessions = () => {
-    oviClient.getChatSessions().then(setSessions).catch(console.error);
-  };
-
-  useEffect(() => {
-    refreshSessions();
-  }, []);
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -103,7 +95,7 @@ export default function ChatPage() {
           conversationId={activeSessionId}
           onNewConversation={(id) => {
             setActiveSessionId(id);
-            oviClient.getChatSessions().then(setSessions).catch(console.error);
+            refreshSessions();
           }}
         />
       </div>

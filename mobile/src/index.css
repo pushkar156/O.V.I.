@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;600;700;800;900&family=Lexend:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap');
+
+:root {
+  --bg-color: #1c1b1b;
+  --primary-color: #AF3E3E;
+  --primary-bright: #CD5656;
+  --secondary-color: #ffb3ae;
+  --surface-color: #2a2a2a;
+  --surface-variant: #201f1f;
+  --border-color: rgba(175, 62, 62, 0.15);
+  --text-main: #e5e2e1;
+  --text-muted: rgba(229, 226, 225, 0.6);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Lexend', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+.glass {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 20px);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+.bg-mesh {
+  background-image: radial-gradient(circle at 50% 50%, rgba(175, 62, 62, 0.05) 0%, transparent 70%);
+}
+
+@keyframes pulse-glow {
+  0% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.05); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 0.3; }
+}
+
+.glow-orb {
+  filter: blur(40px);
+  background: radial-gradient(circle, var(--primary-bright) 0%, transparent 70%);
+  animation: pulse-glow 4s infinite ease-in-out;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.font-headline { font-family: 'Sora', sans-serif; }
+.font-label { font-family: 'Public Sans', sans-serif; }

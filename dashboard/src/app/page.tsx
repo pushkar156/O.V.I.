@@ -5,14 +5,23 @@ import { motion } from "framer-motion";
 import { SystemHUD } from "@/components/SystemHUD";
 import { OVIChat } from "@/components/OVIChat";
 import { DeviceStatus } from "@/components/DeviceStatus";
+import { useChat } from "@/context/ChatContext";
 
 export default function DashboardPage() {
+  const { activeSessionId, setActiveSessionId, refreshSessions } = useChat();
+
   return (
     <main className="p-4 lg:p-8 h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] flex flex-col xl:flex-row gap-6 lg:gap-8 overflow-hidden flex-1">
       
       {/* Center Panel (Chat & Tools) */}
       <div className="flex-1 flex flex-col gap-6 min-h-0">
-        <OVIChat />
+        <OVIChat 
+          conversationId={activeSessionId}
+          onNewConversation={(id) => {
+            setActiveSessionId(id);
+            refreshSessions();
+          }}
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 shrink-0">
           <motion.div 

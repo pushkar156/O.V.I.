@@ -3,6 +3,7 @@ from core.tools.app_control import OpenAppTool, CloseAppTool
 from core.tools.file_tools import ListDirectoryTool, ReadFileTool, SearchFilesTool
 from core.tools.browser_tools import OpenURLTool, WebSearchTool
 from core.tools.clipboard_tools import ReadClipboardTool, WriteClipboardTool
+from core.tools.cross_device import CROSS_DEVICE_TOOLS
 
 # Instantiate all tools
 ALL_TOOLS = [
@@ -25,7 +26,10 @@ ALL_TOOLS = [
     
     # Clipboard
     ReadClipboardTool(),
-    WriteClipboardTool()
+    WriteClipboardTool(),
+    
+    # Cross-Device (Multi-Agent Mesh)
+    *CROSS_DEVICE_TOOLS
 ]
 
 def get_tool_definitions():

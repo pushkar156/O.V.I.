@@ -22,13 +22,14 @@ export const SystemHUD: React.FC = () => {
     // Handler for messages from the WebSocket
     const handleMessage = (data: any) => {
       if (data.type === "stats") {
-        const payload = data.payload;
+        const { local: payload, agents } = data.payload;
         
+        if (!payload) return;
+
         // Calculate network speed (MB/s) since last ping
         const currentBytes = payload.network.bytes_recv + payload.network.bytes_sent;
         let speedMBps = 0;
         if (lastNetworkBytes > 0) {
-          // stats are broadcasted every 2 seconds roughly
           speedMBps = (currentBytes - lastNetworkBytes) / (1024 * 1024) / 2;
         }
         lastNetworkBytes = currentBytes;
