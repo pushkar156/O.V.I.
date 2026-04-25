@@ -8,6 +8,7 @@ from core.llm.prompt_builder import prompt_builder
 from core.llm.tool_router import tool_router
 from core.tools import get_tool_definitions
 from core.memory.short_term import memory_manager
+from core.memory.long_term import long_term_memory
 from core.agents.agent_registry import agent_registry
 
 router = APIRouter(prefix="/api/chat", tags=["Chat"])
@@ -51,6 +52,12 @@ async def chat_endpoint(request: ChatRequest):
     online_agents = agent_registry.get_online_agents()
     context["agents"] = online_agents
     context["agent_count"] = len(online_agents)
+    
+    # 1.5 Fetch Semantic Memories (RAG)
+    memories = await long_term_memory.recall(request.message, limit=3)
+    if memories:
+        # Extract content for the prompt
+        context["preferences"] = "\n".join([f"- {m['content']}" for m in memories])
     
     tool_defs = get_tool_definitions()
     system_prompt = prompt_builder.build_system_prompt(tools=tool_defs, context=context)

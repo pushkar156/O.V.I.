@@ -16,33 +16,46 @@ async def lifespan(app: FastAPI):
     # Startup logic
     logger.info("Initializing O.V.I. Core Systems...")
     
-    # 1. Initialize Database
-    await init_db()
-    
-    # 2. Check Ollama Health
-    ollama_healthy = await ollama_client.check_health()
-    if not ollama_healthy:
-        logger.error("Ollama connection failed or model not found. Check if Ollama is running.")
-    else:
-        logger.info(f"Ollama connected. Model: {settings.DEFAULT_MODEL}")
-    
-    # 2. Register Tools
-    for tool in ALL_TOOLS:
-        tool_router.register_tool(tool.name, tool.execute)
-    
-    # 3. Start Telemetry Heartbeat
-    import asyncio
-    async def telemetry_heartbeat():
-        while True:
-            await asyncio.sleep(2)
-            await websocket.manager.broadcast_stats()
-            
-    asyncio.create_task(telemetry_heartbeat())
-    
-    logger.info("O.V.I. Core Systems Online.")
-    yield
-    # Shutdown logic
-    logger.info("Shutting down O.V.I. Core Systems...")
+    try:
+        # 1. Initialize Database
+        logger.debug("Connecting to SQLite...")
+        await init_db()
+        
+        # 2. Check Ollama Health
+        logger.debug("Verifying Ollama link...")
+        ollama_healthy = await ollama_client.check_health()
+        if not ollama_healthy:
+            logger.warning("Ollama connection failed or model not found. Some features may be limited.")
+        else:
+            logger.info(f"Ollama connected. Model: {settings.DEFAULT_MODEL}")
+        
+        # 3. Register Tools
+        logger.debug("Registering core tools...")
+        for tool in ALL_TOOLS:
+            tool_router.register_tool(tool.name, tool.execute)
+        
+        # 4. Start Telemetry Heartbeat
+        import asyncio
+        async def telemetry_heartbeat():
+            while True:
+                try:
+                    await asyncio.sleep(2)
+                    await websocket.manager.broadcast_stats()
+                except Exception as e:
+                    logger.error(f"Heartbeat error: {e}")
+                    await asyncio.sleep(5)
+                    
+        asyncio.create_task(telemetry_heartbeat())
+        
+        logger.success("O.V.I. Core Systems Online and Ready.")
+        yield
+    except Exception as e:
+        logger.critical(f"FATAL: Core systems failed to initialize: {e}")
+        # We don't raise here to allow FastAPI to at least try and show the error
+        yield
+    finally:
+        # Shutdown logic
+        logger.info("Shutting down O.V.I. Core Systems...")
 
 app = FastAPI(
     title="O.V.I. Core Server",

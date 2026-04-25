@@ -94,5 +94,17 @@ class OllamaClient:
             logger.error(f"Ollama streaming chat failed: {e}")
             yield f"\n[Error: {e}]"
 
+    async def get_embeddings(self, text: str, model: str = "nomic-embed-text") -> List[float]:
+        """Convert text into a vector representation."""
+        try:
+            response = await self.client.embeddings(
+                model=model,
+                prompt=text
+            )
+            return response['embedding']
+        except Exception as e:
+            logger.error(f"Ollama embedding failed: {e}")
+            return []
+
 # Global instance
 ollama_client = OllamaClient()
