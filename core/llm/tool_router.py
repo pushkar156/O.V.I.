@@ -1,5 +1,6 @@
 import json
 import re
+import inspect
 from typing import Dict, Any, Optional, Tuple
 from loguru import logger
 
@@ -36,7 +37,18 @@ class ToolRouter:
 
         try:
             logger.info(f"Executing tool: {tool_name} with args: {args}")
-            result = await self.registered_tools[tool_name](**args)
+            func = self.registered_tools[tool_name]
+            
+            # Determine calling convention:
+            # Old tools (BaseTool): async def execute(**kwargs) -> ToolResult
+            # New tools (Phase 5.2): def execute(args: dict) -> str
+            if inspect.iscoroutinefunction(func):
+                # Async tool (BaseTool style) — unpack args as kwargs
+                result = await func(**args)
+            else:
+                # Sync tool (new style) — pass the args dict directly
+                result = func(args)
+            
             return tool_name, result
         except Exception as e:
             logger.error(f"Error executing tool {tool_name}: {e}")
@@ -44,22 +56,44 @@ class ToolRouter:
 
     def _extract_json(self, text: str) -> Optional[Dict[str, Any]]:
         """Finds and parses the first JSON block in the LLM response."""
-        # Try finding JSON within markdown blocks first
-        markdown_match = re.search(r"```json\s*(\{.*?\})\s*```", text, re.DOTALL)
+        # Strategy 1: Find JSON in a markdown code block (```json ... ```)
+        # The LLM sometimes puts extra text after the JSON inside the block,
+        # so we look for the first valid JSON object within the block.
+        markdown_match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
         if markdown_match:
-            try:
-                return json.loads(markdown_match.group(1))
-            except json.JSONDecodeError:
-                pass
+            block_content = markdown_match.group(1).strip()
+            parsed = self._find_first_json_object(block_content)
+            if parsed:
+                return parsed
 
-        # Fallback: try finding any JSON-like structure
-        json_match = re.search(r"(\{.*?\})", text, re.DOTALL)
-        if json_match:
-            try:
-                return json.loads(json_match.group(1))
-            except json.JSONDecodeError:
-                pass
+        # Strategy 2: Find any JSON-like { "tool": ... } structure in the text
+        parsed = self._find_first_json_object(text)
+        if parsed:
+            return parsed
 
+        return None
+
+    def _find_first_json_object(self, text: str) -> Optional[Dict[str, Any]]:
+        """Extracts the first valid JSON object from a string using brace matching."""
+        start = text.find('{')
+        if start == -1:
+            return None
+        
+        depth = 0
+        for i in range(start, len(text)):
+            if text[i] == '{':
+                depth += 1
+            elif text[i] == '}':
+                depth -= 1
+                if depth == 0:
+                    candidate = text[start:i+1]
+                    try:
+                        obj = json.loads(candidate)
+                        if isinstance(obj, dict) and "tool" in obj:
+                            return obj
+                    except json.JSONDecodeError:
+                        pass
+                    break
         return None
 
 # Global instance

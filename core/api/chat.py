@@ -8,7 +8,9 @@ from core.llm.prompt_builder import prompt_builder
 from core.llm.tool_router import tool_router
 from core.tools import get_tool_definitions
 from core.memory.short_term import memory_manager
+from core.memory.long_term import long_term_memory
 from core.agents.agent_registry import agent_registry
+from core.personality.routines import routine_manager
 
 router = APIRouter(prefix="/api/chat", tags=["Chat"])
 
@@ -52,6 +54,12 @@ async def chat_endpoint(request: ChatRequest):
     context["agents"] = online_agents
     context["agent_count"] = len(online_agents)
     
+    # 1.5 Fetch Semantic Memories (RAG)
+    memories = await long_term_memory.recall(request.message, limit=3)
+    if memories:
+        # Extract content for the prompt
+        context["preferences"] = "\n".join([f"- {m['content']}" for m in memories])
+    
     tool_defs = get_tool_definitions()
     system_prompt = prompt_builder.build_system_prompt(tools=tool_defs, context=context)
     
@@ -68,6 +76,29 @@ async def chat_endpoint(request: ChatRequest):
     tools_used = []
     
     try:
+        # 3.5 Check for Routine Triggers
+        matched_routine = routine_manager.match_routine(request.message)
+        if matched_routine:
+            logger.info(f"Routine triggered: {matched_routine}")
+            routine_result = await routine_manager.execute_routine(matched_routine)
+            
+            # Feed routine result to LLM for a natural summary
+            messages.append({"role": "user", "content": request.message})
+            messages.append({
+                "role": "system",
+                "content": f"You just executed the '{matched_routine}' routine. Results:\n{routine_result}\n\nNow give the user a friendly summary of what happened."
+            })
+            
+            final_response = await ollama_client.chat(messages)
+            content = final_response.get("content", "")
+            
+            await memory_manager.add_message(conv_id, "assistant", content)
+            return ChatResponse(
+                response=content,
+                tools_used=tools_used,
+                conversation_id=conv_id
+            )
+        
         # 4. First Pass: Get intent from LLM
         response_msg = await ollama_client.chat(messages)
         content = response_msg.get("content", "")
