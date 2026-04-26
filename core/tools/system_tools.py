@@ -60,3 +60,42 @@ class TimeTool(BaseTool):
     async def execute(self, **kwargs) -> ToolResult:
         now = datetime.now().strftime("%A, %B %d, %Y %H:%M:%S")
         return ToolResult(success=True, data={"time": now}, message=f"Current time is {now}")
+
+class SetSystemThemeTool(BaseTool):
+    @property
+    def name(self) -> str:
+        return "set_system_theme"
+
+    @property
+    def description(self) -> str:
+        return "Sets the Windows system theme to 'light' or 'dark'."
+
+    @property
+    def parameters(self) -> Dict[str, Any]:
+        return {
+            "type": "object",
+            "properties": {
+                "theme": {"type": "string", "enum": ["light", "dark"], "description": "The theme to apply."}
+            },
+            "required": ["theme"]
+        }
+
+    async def execute(self, theme: str, **kwargs) -> ToolResult:
+        if platform.system() != "Windows":
+            return ToolResult(success=False, message="Theme control is only supported on Windows.")
+        
+        try:
+            import winreg
+            key_path = r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
+            value_name_apps = "AppsUseLightTheme"
+            value_name_system = "SystemUsesLightTheme"
+            
+            value = 1 if theme == "light" else 0
+            
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_SET_VALUE) as key:
+                winreg.SetValueEx(key, value_name_apps, 0, winreg.REG_DWORD, value)
+                winreg.SetValueEx(key, value_name_system, 0, winreg.REG_DWORD, value)
+            
+            return ToolResult(success=True, message=f"System theme set to {theme}.")
+        except Exception as e:
+            return ToolResult(success=False, message=f"Failed to set theme: {e}")

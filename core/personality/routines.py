@@ -30,6 +30,15 @@ ROUTINES = {
         "steps": [
             {"tool": "toggle_system_mute", "args": {}, "label": "Muting system"},
         ]
+    },
+    "workspace_setup": {
+        "trigger_phrases": ["setup my workspace", "set up my workspace", "coding setup", "time to code"],
+        "description": "Opens VS Code, dark mode, and starts dev environment.",
+        "steps": [
+            {"tool": "open_application", "args": {"name": "code"}, "label": "Opening VS Code"},
+            {"tool": "set_system_theme", "args": {"theme": "dark"}, "label": "Switching to Dark Mode"},
+            {"tool": "run_shell_command", "args": {"command": "npm run dev"}, "label": "Starting Dev Server"},
+        ]
     }
 }
 
@@ -87,7 +96,7 @@ class RoutineManager:
                 if inspect.iscoroutinefunction(func):
                     result = await func(**args)
                 else:
-                    result = func(args)
+                    result = func(**args)
                 
                 results.append(f"✓ {label}: Done.")
             except Exception as e:

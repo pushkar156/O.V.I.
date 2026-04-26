@@ -20,7 +20,7 @@ export const SystemWidget: React.FC<SystemWidgetProps> = ({
   value, 
   unit = "", 
   progress,
-  colorClass = "bg-[#CD5656] dark:bg-[#ffb3ae]",
+  colorClass = "bg-[#D97706] dark:bg-[#F59E0B]",
   history = [],
   dataKey
 }) => {
@@ -39,13 +39,13 @@ export const SystemWidget: React.FC<SystemWidgetProps> = ({
     >
       <div className="flex justify-between mb-2">
         <span className="font-label text-xs text-on-surface-variant dark:text-[#a6bcc7] group-hover:text-on-surface dark:group-hover:text-[#e5e2e1] transition-colors">{label}</span>
-        <span className="font-label text-xs font-bold text-[#CD5656] dark:text-[#ffb3ae]">
+        <span className="font-label text-xs font-bold text-[#D97706] dark:text-[#F59E0B]">
           {value}{unit}
         </span>
       </div>
       <div className="h-2 w-full bg-surface-variant dark:bg-[#353534] rounded-full overflow-hidden">
         <motion.div 
-          className={`h-full rounded-full ${colorClass.includes('#CD5656') ? 'bg-[#CD5656] dark:bg-[#ffb3ae]' : colorClass}`}
+          className={`h-full rounded-full ${colorClass.includes('#D97706') ? 'bg-[#D97706] dark:bg-[#F59E0B]' : colorClass}`}
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.5, ease: "easeOut" }}
@@ -66,7 +66,7 @@ export const SystemWidget: React.FC<SystemWidgetProps> = ({
                 <Line 
                   type="monotone" 
                   dataKey={dataKey} 
-                  stroke={mounted && theme === 'dark' ? '#ffb3ae' : '#CD5656'}
+                  stroke={mounted && theme === 'dark' ? '#F59E0B' : '#D97706'}
                   strokeWidth={2} 
                   dot={false}
                   isAnimationActive={false} // Disable recharts built-in animation for smoother real-time feel

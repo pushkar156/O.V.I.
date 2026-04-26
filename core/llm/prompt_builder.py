@@ -57,15 +57,21 @@ class PromptBuilder:
         )
 
     def _get_routines_section(self) -> str:
+        from core.personality.routines import routine_manager
+        routines = routine_manager.list_routines()
+        
+        routines_list = ""
+        for r in routines:
+            triggers = " / ".join([f"'{t}'" for t in r['triggers']])
+            routines_list += f"- {triggers} → {r['description']}\n"
+            
         return (
             "### ROUTINES\n"
             "You have pre-configured routines. When a user says a trigger phrase, "
             "respond by telling them you're activating the routine. "
             "The system will handle execution automatically.\n"
             "Available routines:\n"
-            "- 'good morning' / 'start my day' → Opens Chrome, VS Code, gives briefing.\n"
-            "- 'good night' / 'end my day' → Mutes volume, closes apps, says farewell.\n"
-            "- 'focus mode' / 'do not disturb' → Mutes system for deep work.\n"
+            f"{routines_list}"
         )
 
     def _get_output_formatting_section(self) -> str:

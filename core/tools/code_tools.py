@@ -21,10 +21,10 @@ class RunCommandTool:
             }
         }
 
-    def execute(self, args: Dict[str, Any]) -> str:
+    def execute(self, **kwargs) -> str:
         try:
-            command = args.get("command")
-            cwd = args.get("cwd", os.getcwd())
+            command = kwargs.get("command")
+            cwd = kwargs.get("cwd", os.getcwd())
             
             # Safety Check: Warn LLM about dangerous commands in prompt, 
             # but for now, we'll just execute.
@@ -67,9 +67,9 @@ class GitStatusTool:
             }
         }
 
-    def execute(self, args: Dict[str, Any]) -> str:
+    def execute(self, **kwargs) -> str:
         try:
-            path = args.get("path", os.getcwd())
+            path = kwargs.get("path", os.getcwd())
             result = subprocess.run(
                 "git status", 
                 shell=True, 
