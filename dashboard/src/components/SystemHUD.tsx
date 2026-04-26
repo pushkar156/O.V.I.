@@ -65,10 +65,10 @@ export const SystemHUD: React.FC = () => {
   }, []);
 
   return (
-    <section className="bg-surface-container dark:bg-[#201f1f] p-6 rounded-2xl border border-[#AF3E3E]/10 dark:border-[#5b403d]/15 shadow-sm transition-colors duration-300">
+    <section className="bg-surface-container dark:bg-[#201f1f] p-6 rounded-2xl border border-[#D97706]/10 dark:border-[#5b403d]/15 shadow-sm transition-colors duration-300">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-headline font-bold text-on-surface dark:text-[#e5e2e1]">System Vitals</h3>
-        <span className="material-symbols-outlined text-[#AF3E3E]/50 dark:text-[#a6bcc7]">monitoring</span>
+        <span className="material-symbols-outlined text-[#D97706]/50 dark:text-[#a6bcc7]">monitoring</span>
       </div>
       
       <div className="space-y-6">

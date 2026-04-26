@@ -38,11 +38,11 @@ class SetVolumeTool(BaseMediaTool):
             }
         }
     
-    def execute(self, args: Dict[str, Any]) -> str:
+    def execute(self, **kwargs) -> str:
         volume = self._get_volume_interface()
         if not volume: return "Audio interface unavailable."
         try:
-            level = args.get("level", 50)
+            level = kwargs.get("level", 50)
             volume.SetMasterVolumeLevelScalar(level / 100.0, None)
             return f"System volume set to {level}%."
         except Exception as e:
@@ -59,7 +59,7 @@ class ToggleMuteTool(BaseMediaTool):
             "parameters": {"type": "object", "properties": {}}
         }
     
-    def execute(self, args: Dict[str, Any]) -> str:
+    def execute(self, **kwargs) -> str:
         volume = self._get_volume_interface()
         if not volume: return "Audio interface unavailable."
         try:
@@ -89,9 +89,9 @@ class MediaPlaybackTool:
             }
         }
     
-    def execute(self, args: Dict[str, Any]) -> str:
+    def execute(self, **kwargs) -> str:
         try:
-            action = args.get("action", "play_pause")
+            action = kwargs.get("action", "play_pause")
             if action == "play_pause": keyboard.send("play/pause media")
             elif action == "next": keyboard.send("next track")
             elif action == "previous": keyboard.send("previous track")

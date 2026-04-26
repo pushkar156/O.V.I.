@@ -43,11 +43,11 @@ class ToolRouter:
             # Old tools (BaseTool): async def execute(**kwargs) -> ToolResult
             # New tools (Phase 5.2): def execute(args: dict) -> str
             if inspect.iscoroutinefunction(func):
-                # Async tool (BaseTool style) — unpack args as kwargs
+                # Async tool — use await with unpacked arguments
                 result = await func(**args)
             else:
-                # Sync tool (new style) — pass the args dict directly
-                result = func(args)
+                # Sync tool — call with unpacked arguments
+                result = func(**args)
             
             return tool_name, result
         except Exception as e:
@@ -56,44 +56,47 @@ class ToolRouter:
 
     def _extract_json(self, text: str) -> Optional[Dict[str, Any]]:
         """Finds and parses the first JSON block in the LLM response."""
-        # Strategy 1: Find JSON in a markdown code block (```json ... ```)
-        # The LLM sometimes puts extra text after the JSON inside the block,
-        # so we look for the first valid JSON object within the block.
-        markdown_match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
-        if markdown_match:
-            block_content = markdown_match.group(1).strip()
-            parsed = self._find_first_json_object(block_content)
+        # 1. Try to find JSON blocks first (standard markdown)
+        json_blocks = re.findall(r"```(?:json)?\s*(.*?)```", text, re.DOTALL)
+        for block in json_blocks:
+            parsed = self._find_first_json_object(block.strip())
             if parsed:
                 return parsed
 
-        # Strategy 2: Find any JSON-like { "tool": ... } structure in the text
-        parsed = self._find_first_json_object(text)
-        if parsed:
-            return parsed
-
-        return None
+        # 2. If no block found or no tool in blocks, scan the raw text for any { ... } object
+        return self._find_first_json_object(text)
 
     def _find_first_json_object(self, text: str) -> Optional[Dict[str, Any]]:
-        """Extracts the first valid JSON object from a string using brace matching."""
-        start = text.find('{')
-        if start == -1:
-            return None
+        """Extracts the first valid JSON object from a string using robust brace matching."""
+        # Find all '{' indices
+        starts = [m.start() for m in re.finditer(r'\{', text)]
         
-        depth = 0
-        for i in range(start, len(text)):
-            if text[i] == '{':
-                depth += 1
-            elif text[i] == '}':
-                depth -= 1
-                if depth == 0:
-                    candidate = text[start:i+1]
-                    try:
-                        obj = json.loads(candidate)
-                        if isinstance(obj, dict) and "tool" in obj:
-                            return obj
-                    except json.JSONDecodeError:
-                        pass
-                    break
+        for start in starts:
+            depth = 0
+            for i in range(start, len(text)):
+                if text[i] == '{':
+                    depth += 1
+                elif text[i] == '}':
+                    depth -= 1
+                    if depth == 0:
+                        candidate = text[start:i+1]
+                        try:
+                            # Clean up potential artifacts like trailing commas before closing braces
+                            # although json.loads is strict, we'll try it raw first
+                            obj = json.loads(candidate)
+                            if isinstance(obj, dict) and "tool" in obj:
+                                return obj
+                        except json.JSONDecodeError:
+                            # Try to fix common LLM mistakes (like trailing commas)
+                            try:
+                                # Very simple fix for trailing comma before }
+                                fixed = re.sub(r',\s*}', '}', candidate)
+                                obj = json.loads(fixed)
+                                if isinstance(obj, dict) and "tool" in obj:
+                                    return obj
+                            except:
+                                pass
+                        break
         return None
 
 # Global instance

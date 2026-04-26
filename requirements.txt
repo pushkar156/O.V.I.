@@ -25,6 +25,11 @@ numpy>=1.26.0
 pyautogui>=0.9.54
 psutil>=5.9.0
 pyperclip>=1.9.0
+pystray>=0.19.5
+Pillow>=10.3.0
+keyboard>=0.13.5
+pycaw>=20181226
+comtypes>=1.4.0
 
 # Utilities
 python-dotenv>=1.0.0

@@ -83,7 +83,6 @@ async def chat_endpoint(request: ChatRequest):
             routine_result = await routine_manager.execute_routine(matched_routine)
             
             # Feed routine result to LLM for a natural summary
-            messages.append({"role": "user", "content": request.message})
             messages.append({
                 "role": "system",
                 "content": f"You just executed the '{matched_routine}' routine. Results:\n{routine_result}\n\nNow give the user a friendly summary of what happened."
@@ -129,6 +128,12 @@ async def chat_endpoint(request: ChatRequest):
 
         # 7. Persist Assistant Response
         await memory_manager.add_message(conv_id, "assistant", content)
+
+        # 8. Store in Long-Term Memory (Asynchronous background task)
+        # We store the user's message to build up the knowledge base over time.
+        # In a future update, we can have the LLM decide if it's a 'preference' vs a 'fact'.
+        import asyncio
+        asyncio.create_task(long_term_memory.store_memory(request.message, category="conversation"))
 
         return ChatResponse(
             response=content,

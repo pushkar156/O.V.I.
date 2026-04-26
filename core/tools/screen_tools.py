@@ -27,7 +27,7 @@ class ScreenVisionTool:
             }
         }
 
-    async def execute(self, args: Dict[str, Any]) -> str:
+    async def execute(self, **kwargs) -> str:
         try:
             # 1. Capture Screenshot
             screenshot = pyautogui.screenshot()
@@ -41,7 +41,7 @@ class ScreenVisionTool:
             img_str = base64.b64encode(buffered.getvalue()).decode()
             
             # 4. Prepare Vision Prompt
-            focus = args.get("focus", "everything")
+            focus = kwargs.get("focus", "everything")
             prompt = f"Describe what is happening on this computer screen. Focus on {focus}."
             
             # 5. Call Ollama with Vision Support

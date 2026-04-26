@@ -1,4 +1,4 @@
-from core.tools.system_tools import SystemInfoTool, TimeTool
+from core.tools.system_tools import SystemInfoTool, TimeTool, SetSystemThemeTool
 from core.tools.app_control import OpenAppTool, CloseAppTool
 from core.tools.file_tools import ListDirectoryTool, ReadFileTool, SearchFilesTool
 from core.tools.browser_tools import OpenURLTool, WebSearchTool
@@ -14,6 +14,7 @@ ALL_TOOLS = [
     # System
     SystemInfoTool(),
     TimeTool(),
+    SetSystemThemeTool(),
     
     # App Control
     OpenAppTool(),
