@@ -6,6 +6,7 @@ import os
 import uvicorn
 from loguru import logger
 import webbrowser
+import winreg
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -22,6 +23,12 @@ class OVITrayApp:
     def create_menu(self):
         return pystray.Menu(
             pystray.MenuItem("Show Dashboard", self.on_dashboard),
+            pystray.MenuItem("Run Routine", pystray.Menu(
+                pystray.MenuItem("Workspace Setup", lambda: self.run_routine("workspace_setup")),
+                pystray.MenuItem("Clean Desktop", lambda: self.run_routine("desktop_cleanup")),
+            )),
+            pystray.Menu.Separator(),
+            pystray.MenuItem("Launch on Startup", self.on_toggle_startup, checked=lambda item: self.is_startup_enabled()),
             pystray.MenuItem("Settings", self.on_settings),
             pystray.Menu.Separator(),
             pystray.MenuItem("Exit", self.on_exit)
@@ -29,18 +36,38 @@ class OVITrayApp:
 
     def on_dashboard(self):
         logger.info("Opening O.V.I. Dashboard...")
-        webbrowser.open(f"http://localhost:3000") # Default dashboard port
+        webbrowser.open(f"http://localhost:3000")
+
+    def run_routine(self, routine_name):
+        logger.info(f"Triggering routine: {routine_name}")
+        # In a real implementation, we'd call the core API or RoutineManager directly
+        # For now, it's a bridge to the persona module
+        pass
+
+    def is_startup_enabled(self):
+        try:
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run", 0, winreg.KEY_READ)
+            winreg.QueryValueEx(key, "OVI_Assistant")
+            winreg.CloseKey(key)
+            return True
+        except:
+            return False
+
+    def on_toggle_startup(self, icon, item):
+        import subprocess
+        enable = not self.is_startup_enabled()
+        cmd = ["python", "scripts/manage_startup.py", "--enable" if enable else "--disable"]
+        subprocess.run(cmd, capture_output=True)
+        icon.update_menu()
 
     def on_settings(self):
         logger.info("Opening Settings...")
-        # Placeholder for settings UI
         pass
 
     def on_exit(self, icon, item):
         logger.info("Shutting down O.V.I. Desktop Layer...")
         self.is_running = False
         icon.stop()
-        # In a real app, we'd signal the FastAPI server to stop
         os._exit(0) 
 
     def run_server(self):
