@@ -40,9 +40,21 @@ class OVITrayApp:
 
     def run_routine(self, routine_name):
         logger.info(f"Triggering routine: {routine_name}")
-        # In a real implementation, we'd call the core API or RoutineManager directly
-        # For now, it's a bridge to the persona module
-        pass
+        from core.tools.routine_manager import routine_manager
+        import asyncio
+        
+        # We need a loop to run the async routine from the thread-based tray callback
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                asyncio.run_coroutine_threadsafe(routine_manager.run_routine(routine_name), loop)
+            else:
+                loop.run_until_complete(routine_manager.run_routine(routine_name))
+        except RuntimeError:
+            # If no loop in this thread, create one
+            new_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(new_loop)
+            new_loop.run_until_complete(routine_manager.run_routine(routine_name))
 
     def is_startup_enabled(self):
         try:

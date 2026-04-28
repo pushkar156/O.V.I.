@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { oviClient } from '@/lib/ovi-client';
+import { VoiceOrb } from './VoiceOrb';
 
 interface Message {
   id: string;
@@ -15,9 +16,22 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [isWoken, setIsWoken] = useState(false);
   const [volume, setVolume] = useState(0);
   const [currentConvId, setCurrentConvId] = useState<string | undefined>(conversationId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMessage = (data: any) => {
+      if (data.type === "wake") {
+        setIsWoken(true);
+        // Auto-reset after a few seconds if no interaction
+        setTimeout(() => setIsWoken(false), 5000);
+      }
+    };
+
+    oviClient.onMessage(handleMessage);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -119,39 +133,16 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
       <div className="flex-1 overflow-y-auto z-10 px-4 md:px-8 pt-8 pb-32 flex flex-col scrollbar-hide">
         {messages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center relative">
-            <motion.div
-              onClick={toggleRecording}
-              animate={{ scale: isRecording ? 1 + (volume / 200) : 1 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className={`relative mb-8 rounded-full cursor-pointer flex items-center justify-center transition-all duration-300 ${isRecording
-                  ? 'w-48 h-48 bg-[#CD5656]/20 dark:bg-[#ffb3ae]/10 shadow-[0_0_100px_rgba(205,86,86,0.3)] dark:shadow-[0_0_100px_rgba(255,179,174,0.2)]'
-                  : 'w-32 h-32 bg-[#CD5656]/5 dark:bg-[#ffb3ae]/5 hover:scale-105 shadow-[0_0_40px_rgba(205,86,86,0.1)] dark:shadow-[0_0_40px_rgba(255,179,174,0.05)]'
-                }`}
-            >
-              <motion.div
-                animate={{
-                  scale: isRecording ? 1 + (volume / 100) : 1,
-                  opacity: isRecording ? 0.8 + (volume / 500) : 0.5
-                }}
-                className={`absolute w-full h-full rounded-full blur-xl transition-colors duration-300 ${isRecording ? 'bg-[#CD5656] dark:bg-[#cc3a3a]' : 'bg-[#CD5656]/40 dark:bg-[#ffb3ae]/40'
-                  }`}
+            <div className="relative mb-8 flex items-center justify-center cursor-pointer" onClick={toggleRecording}>
+              <VoiceOrb 
+                state={isRecording ? "listening" : isWoken ? "speaking" : "idle"} 
               />
-              <span className={`material-symbols-outlined text-5xl relative z-10 transition-colors duration-300 ${isRecording ? 'text-white dark:text-[#fff2f0]' : 'text-[#CD5656] dark:text-[#ffb3ae]'
-                }`}>
-                mic
-              </span>
-              <AnimatePresence>
-                {isRecording && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.2 }}
-                    className="absolute inset-0 border-2 border-[#CD5656]/40 dark:border-[#ffb3ae]/40 rounded-full"
-                    style={{ transform: `scale(${1 + (volume / 150)})` }}
-                  />
-                )}
-              </AnimatePresence>
-            </motion.div>
+              {!isRecording && !isWoken && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-4xl text-[#CD5656] opacity-50">mic</span>
+                </div>
+              )}
+            </div>
 
             <h3 className="font-headline text-2xl md:text-3xl font-bold text-on-surface dark:text-[#e5e2e1] mb-2 z-10">
               {isRecording ? "Listening..." : "How can I help you today?"}

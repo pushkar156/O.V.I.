@@ -15,9 +15,10 @@ class WakeWordListener:
         self.model_name = model_name
         self.sensitivity = sensitivity
         self.running = False
+        self.on_wake_callback = None
+        self.loop = None
         
         # Load the pre-trained model
-        # openWakeWord will automatically download the model on first run
         self.model = Model(wakeword_models=[self.model_name])
         logger.info(f"Wake Word Listener Initialized (Model: {self.model_name})")
 
@@ -26,20 +27,21 @@ class WakeWordListener:
         if status:
             logger.warning(f"Microphone Status Error: {status}")
             
-        # Convert audio to the format expected by openWakeWord (16kHz, 16-bit PCM)
-        # Note: sounddevice provides floats, we need to handle that conversion if needed,
-        # but openWakeWord 'Model.predict' can often handle raw arrays.
+        # Convert float32 to int16 PCM
+        audio_int16 = (indata[:, 0] * 32767).astype(np.int16)
         
         # Get predictions
-        prediction = self.model.predict(indata[:, 0])
+        prediction = self.model.predict(audio_int16)
         
-        # Check if the confidence exceeds our sensitivity for any model
+        # Check if the confidence exceeds our sensitivity
         for model_name, confidence in prediction.items():
             if confidence >= self.sensitivity:
                 logger.info(f"Wake word detected: {model_name} (Confidence: {confidence:.2f})")
-                if self.on_wake_callback:
-                    # We run this in the event loop since this is a thread callback
-                    asyncio.run_coroutine_threadsafe(self.on_wake_callback(), self.loop)
+                if self.on_wake_callback and self.loop:
+                    # Trigger the callback in the main thread's event loop
+                    self.loop.call_soon_threadsafe(
+                        lambda: asyncio.create_task(self.on_wake_callback())
+                    )
 
     async def start(self, on_wake: Callable):
         """Starts the background listening loop."""
@@ -49,11 +51,15 @@ class WakeWordListener:
         
         logger.info("Starting background wake word listening...")
         
-        # Open the microphone stream
-        # Required format: 16000 Hz, mono
-        with sd.InputStream(samplerate=16000, channels=1, callback=self._audio_callback, blocksize=1280):
-            while self.running:
-                await asyncio.sleep(0.1)
+        try:
+            # Required format: 16000 Hz, mono
+            # OpenWakeWord works best with chunks of 1280 samples (80ms)
+            with sd.InputStream(samplerate=16000, channels=1, callback=self._audio_callback, blocksize=1280):
+                while self.running:
+                    await asyncio.sleep(0.1)
+        except Exception as e:
+            logger.error(f"Wake word listener failed: {e}")
+            self.running = False
 
     def stop(self):
         """Stops the listening loop."""

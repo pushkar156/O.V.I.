@@ -1,0 +1,40 @@
+routines:
+  workspace_setup:
+    description: "Prepare the workspace for coding sessions"
+    steps:
+      - action: "open_app"
+        params:
+          path: "code"
+          args: ["."]
+      - action: "open_url"
+        params:
+          url: "http://localhost:3000"
+      - action: "organize_windows"
+        params:
+          layout: "coding"
+      - action: "notify"
+        params:
+          message: "Neural Link established. Workspace ready for development."
+
+  desktop_cleanup:
+    description: "Organize files on the desktop"
+    steps:
+      - action: "run_script"
+        params:
+          script: "scripts/cleanup_desktop.py"
+      - action: "notify"
+        params:
+          message: "Desktop purged of debris. Focus maintained."
+
+  focus_mode:
+    description: "Minimize distractions and set the mood"
+    steps:
+      - action: "set_volume"
+        params:
+          level: 20
+      - action: "open_url"
+        params:
+          url: "https://www.youtube.com/watch?v=jfKfPfyJRdk" # Lofi
+      - action: "notify"
+        params:
+          message: "Focus mode initiated. Distractions suppressed."

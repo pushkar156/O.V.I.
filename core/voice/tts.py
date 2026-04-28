@@ -1,44 +1,47 @@
 import edge_tts
-import io
+import asyncio
+import os
+import pygame
 from loguru import logger
-from typing import Optional
 
-class TTSManager:
-    """
-    Manages Text-to-Speech synthesis using edge-tts.
-    Provides high-quality, natural-sounding voices without needing local heavy models.
-    """
-    def __init__(self, default_voice: str = "en-US-GuyNeural"):
-        self.default_voice = default_voice
-        logger.info(f"TTS Engine Ready (Default Voice: {self.default_voice})")
+class TTSProvider:
+    def __init__(self, voice: str = "en-GB-SoniaNeural"):
+        self.voice = voice
+        self.output_dir = "data/audio"
+        os.makedirs(self.output_dir, exist_ok=True)
+        
+        # Initialize pygame mixer for audio playback
+        try:
+            pygame.mixer.init()
+        except Exception as e:
+            logger.error(f"Failed to initialize pygame mixer: {e}")
 
-    async def synthesize(self, text: str, voice: Optional[str] = None) -> bytes:
+    async def speak(self, text: str):
         """
-        Converts text input into MP3 audio bytes.
+        Converts text to speech and plays it.
         """
-        if not text:
-            return b""
-            
-        selected_voice = voice or self.default_voice
+        logger.info(f"O.V.I. Speaking: {text}")
+        output_file = os.path.join(self.output_dir, "response.mp3")
         
         try:
-            communicate = edge_tts.Communicate(text, selected_voice)
+            # 1. Generate Speech
+            communicate = edge_tts.Communicate(text, self.voice)
+            await communicate.save(output_file)
             
-            # Collect audio chunks into a buffer
-            audio_buffer = io.BytesIO()
-            async for chunk in communicate.stream():
-                if chunk["type"] == "audio":
-                    audio_buffer.write(chunk["data"])
-            
-            return audio_buffer.getvalue()
+            # 2. Play Audio
+            if os.path.exists(output_file):
+                pygame.mixer.music.load(output_file)
+                pygame.mixer.music.play()
+                while pygame.mixer.music.get_busy():
+                    await asyncio.sleep(0.1)
             
         except Exception as e:
-            logger.error(f"TTS Synthesis failed: {e}")
-            return b""
+            logger.error(f"TTS Error: {e}")
 
-    async def list_voices(self):
-        """Returns a list of available voices from edge-tts."""
-        return await edge_tts.list_voices()
+# Singleton instance
+tts_provider = TTSProvider()
 
-# Default instance
-tts_manager = TTSManager()
+if __name__ == "__main__":
+    async def test():
+        await tts_provider.speak("Neural Link Online. Systems check complete.")
+    asyncio.run(test())
