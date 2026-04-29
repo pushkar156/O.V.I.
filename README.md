@@ -412,6 +412,6 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 <br/>
 
-**Built by [Pushkar](https://github.com/pushkar156)**. Powered by Ollama. Inspired by Jarvis. Owned by no one else.
+**Built by [Pushkar](https://github.com/pushkar156)**. Powered by Ollama. Inspired by Jarvis. Owned by Tony Stark.
 
 </div>
