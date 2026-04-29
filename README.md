@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/O.V.I.-Omnipresent%20Voice%20Intelligence-00d4ff?style=for-the-badge&labelColor=0a0a0f" alt="O.V.I." />
+<img src="https://img.shields.io/badge/O.V.I.-Desktop%20AI%20Sentinel-00d4ff?style=for-the-badge&labelColor=0a0a0f" alt="O.V.I." />
 
 <br/>
 <br/>
@@ -16,20 +16,20 @@
 
 ### **Omnipresent Voice Intelligence**
 
-*A fully local, privacy-first, multi-device AI operating environment*
+*A fully local, privacy-first, native desktop AI teammate*
 
 <br/>
 
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-000000?style=flat-square&logo=ollama&logoColor=white)](https://ollama.com)
+[![Electron](https://img.shields.io/badge/Electron-Native%20App-47848F?style=flat-square&logo=electron&logoColor=white)](https://www.electronjs.org)
 [![Next.js](https://img.shields.io/badge/Next.js-Dashboard-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org)
-[![React](https://img.shields.io/badge/React-Mobile%20PWA-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
 [![License](https://img.shields.io/badge/License-MIT-00d4ff?style=flat-square)](LICENSE)
 
 <br/>
 
-> *"Good morning. All systems online. Your desktop, laptop, and phone are connected. How can I assist?"*
+> *"Good evening, Pushkar. All systems online. How can I assist?"*
 
 ---
 
@@ -41,20 +41,24 @@
 
 ## 🧠 What is O.V.I.?
 
-**O.V.I.** is a personal AI assistant that runs **entirely on your local network** — no cloud, no subscriptions, no data leaving your home. It connects your desktop, laptop, and phone via a WebSocket mesh over local Wi-Fi, uses a local LLM (via [Ollama](https://ollama.com)) for reasoning, and executes **real actions** on your devices.
+**O.V.I.** is not a chatbot. She's your **AI teammate** — a native desktop sentinel that runs **entirely on your machine**, starts when your laptop starts, lives in your system tray, responds to your voice from any screen, and executes **real actions** on your PC.
 
-Think of it as your own **JARVIS** — but real, running on your hardware, and completely private.
+She uses a local LLM (via [Ollama](https://ollama.com)) for reasoning, learns your preferences over time through self-training memory, and connects your devices via an authenticated WebSocket mesh over local Wi-Fi.
+
+Think of her as your own **JARVIS** — but real, running on your hardware, and completely private.
 
 ```
 Marvel JARVIS                      O.V.I.
 ──────────────────────────────     ──────────────────────────────
-Holographic 3D interface      →    Sleek glass-style web dashboard
-Infinite knowledge            →    Local LLM (Qwen3 / Mistral / Llama)
-Controls Iron Man suit        →    Controls your PC, laptop & phone
-Instant global awareness      →    Local network awareness
-Reads Tony's mind             →    Voice + chat commands
+Holographic 3D interface      →    Native Electron app (glass UI)
+Infinite knowledge            →    Local LLM (Qwen3 / Ollama)
+Controls Iron Man suit        →    Controls your entire PC
+Instant global awareness      →    Local network mesh awareness
+Reads Tony's mind             →    Voice + wake word ("Hey OVI")
 Runs on arc reactor           →    Runs on Ollama (localhost)
-All devices synced magically  →    WebSocket mesh over local Wi-Fi
+All devices synced magically  →    Authenticated WebSocket mesh
+Learns Tony's patterns        →    Self-training memory (ChromaDB)
+Always there, never crashes   →    Native desktop sentinel (Electron)
 ```
 
 ---
@@ -65,44 +69,48 @@ All devices synced magically  →    WebSocket mesh over local Wi-Fi
 <tr>
 <td width="50%">
 
-### 🎙️ Voice & Chat Interface
-- **Wake word detection** — *"Hey O.V.I."* activates listening
-- **Local STT** — faster-whisper converts speech to text
-- **Natural TTS** — AI voice responds back
-- **Multi-device** — chat from any browser on any device
-- **Fully offline** — all processing stays on your network
+### 🎙️ Voice-First Interaction
+- **Wake word** — *"Hey OVI"* activates listening instantly
+- **Local STT** — Faster-Whisper converts speech to text
+- **Natural TTS** — Edge-TTS speaks back with a natural voice
+- **Global hotkey** — `Ctrl+Space` summons O.V.I. from anywhere
+- **Native app** — Electron window, not a browser tab
+- **Fully offline** — all processing stays on your machine
 
 </td>
 <td width="50%">
 
-### 🖥️ Desktop Automation
+### 🖥️ Desktop Mastery
 - **App control** — *"Open VS Code"*, *"Close Chrome"*
 - **File operations** — find, move, delete, read files
 - **Screen reading** — screenshot + LLM vision analysis
-- **System monitoring** — CPU, RAM, disk, battery stats
-- **Media control** — play, pause, volume, next track
+- **System monitoring** — CPU, RAM, disk stats in real-time
+- **Window management** — split screens, multi-monitor layouts
+- **Dev suite** — *"Set up my coding environment"* → full automation
 
 </td>
 </tr>
 <tr>
 <td width="50%">
 
-### 💻 Cross-Device Intelligence
-- **Push notifications** — *"Send a reminder to my phone"*
-- **Screen capture** — *"What's on my laptop screen?"*
-- **File transfer** — move files between devices via O.V.I.
-- **Device mesh** — all agents auto-discovered on Wi-Fi
-- **Unified command** — one interface controls everything
+### 🧠 Self-Training Intelligence
+- **Auto-extraction** — learns facts from every conversation
+- **Self-healing** — retries failed tools with adjusted parameters
+- **Long-term memory** — ChromaDB remembers your preferences
+- **Conversation recall** — *"What did I ask last Tuesday?"*
+- **Proactive context** — injects your history before you even ask
+- **Routines** — *"Good night"* → closes apps, dims screen
 
 </td>
 <td width="50%">
 
-### 🧠 Memory & Learning
-- **Long-term memory** — remembers your preferences & facts
-- **Conversation recall** — *"What did I ask last Tuesday?"*
-- **Pattern learning** — adapts to your habits over time
-- **Routines** — *"Good night"* closes apps, dims screen
-- **Semantic search** — ChromaDB vector-powered recall
+### 💻 Cross-Device Mesh (O.V.I. Link)
+- **Authenticated mesh** — shared-secret secured WebSocket
+- **Push notifications** — *"Send a reminder to my phone"*
+- **Screen capture** — *"What's on my laptop screen?"*
+- **File transfer** — move files between devices via O.V.I.
+- **Unified command** — one voice controls everything
+- **Boot-on-startup** — starts with Windows, lives in tray
 
 </td>
 </tr>
@@ -111,9 +119,9 @@ All devices synced magically  →    WebSocket mesh over local Wi-Fi
 ### 🔒 100% Local & Private
 
 - All LLM inference via **Ollama** → stays on your machine
-- Voice processing via **faster-whisper** → stays local
-- No API keys required for core functionality
-- No cloud. No subscriptions. No data leaving your home.
+- Voice processing via **Faster-Whisper** → stays local
+- Memory stored in **local SQLite + ChromaDB** → never leaves your PC
+- No API keys required. No cloud. No subscriptions. No data leaving your home.
 
 ---
 
@@ -123,39 +131,43 @@ All devices synced magically  →    WebSocket mesh over local Wi-Fi
 ┌────────────────────────────────────────────────────────────────────┐
 │                         O.V.I. ECOSYSTEM                          │
 │                                                                    │
-│   Your Devices (all on same Wi-Fi)                                │
-│   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐           │
-│   │  Desktop /   │  │   Laptop     │  │   Mobile     │           │
-│   │  Main PC     │  │  (Windows /  │  │  (Android /  │           │
-│   │  (The Brain) │  │   macOS)     │  │   iOS)       │           │
-│   └──────┬───────┘  └──────┬───────┘  └──────┬───────┘           │
-│          │                 │                  │                    │
-│          └─────────────────┼──────────────────┘                   │
-│                            │  Local Wi-Fi Network                 │
-│                            ▼                                      │
-│              ┌─────────────────────────┐                          │
-│              │    O.V.I. CORE SERVER   │  ← runs on your PC      │
-│              │   (FastAPI + WS Hub)    │    at 192.168.x.x:8000  │
-│              │                         │                          │
-│              │  ┌───────────────────┐  │                          │
-│              │  │  Ollama LLM       │  │  qwen2.5:1.5b /       │
-│              │  │  (localhost:11434) │  │  Mistral / Llama3     │
-│              │  └───────────────────┘  │                          │
-│              │  ┌───────────────────┐  │                          │
-│              │  │  Tool Router      │  │  Maps intent → actions  │
-│              │  └───────────────────┘  │                          │
-│              │  ┌───────────────────┐  │                          │
-│              │  │  Memory Store     │  │  SQLite + ChromaDB      │
-│              │  │  (context + RAG)  │  │  (remembers everything) │
-│              │  └───────────────────┘  │                          │
-│              └─────────────────────────┘                          │
-│                            │                                      │
+│   ┌─────────────────────────────────────────────────────────┐     │
+│   │              ELECTRON NATIVE APP (The Face)              │     │
+│   │   ┌──────────────────────────────────────────────────┐   │     │
+│   │   │  Next.js Dashboard (Glassmorphism UI)            │   │     │
+│   │   │  • Chat Interface    • System HUD                │   │     │
+│   │   │  • Voice Orb         • Memory Browser            │   │     │
+│   │   │  • Device Status     • Tool Manager              │   │     │
+│   │   └──────────────────────────────────────────────────┘   │     │
+│   │   [Ctrl+Space] Global Summon  |  Always-on-Top Overlay   │     │
+│   │   System Tray Integration     |  Boot-on-Startup         │     │
+│   └─────────────────────────────────────────────────────────┘     │
+│                            │                                       │
+│                     WebSocket + REST                               │
+│                            │                                       │
+│   ┌─────────────────────────────────────────────────────────┐     │
+│   │              PYTHON CORE SERVER (The Brain)              │     │
+│   │              FastAPI @ localhost:8000                     │     │
+│   │                                                          │     │
+│   │   ┌──────────────┐  ┌──────────────┐  ┌─────────────┐  │     │
+│   │   │  Ollama LLM  │  │  Tool Router │  │  Memory     │  │     │
+│   │   │  Qwen3 8B    │  │  Intent →    │  │  SQLite +   │  │     │
+│   │   │  :11434      │  │  Actions     │  │  ChromaDB   │  │     │
+│   │   └──────────────┘  └──────────────┘  └─────────────┘  │     │
+│   │                                                          │     │
+│   │   ┌──────────────┐  ┌──────────────┐  ┌─────────────┐  │     │
+│   │   │  Voice Stack │  │  Self-Heal   │  │  Persona    │  │     │
+│   │   │  Wake Word + │  │  Auto-retry  │  │  Warm AI    │  │     │
+│   │   │  STT + TTS   │  │  + Learning  │  │  Teammate   │  │     │
+│   │   └──────────────┘  └──────────────┘  └─────────────┘  │     │
+│   └─────────────────────────────────────────────────────────┘     │
+│                            │                                       │
 │              ┌─────────────┼──────────────┐                       │
 │              ▼             ▼              ▼                        │
-│         PC Agent      Laptop Agent   Mobile Agent                 │
-│         (Python)      (Python)       (PWA / React)                │
+│         PC Agent      Laptop Agent   Mobile Agent (V3)            │
+│         (Python)      (Python)       (React Native)               │
 │         Controls      Controls       Controls phone               │
-│         desktop       laptop         notifications, location      │
+│         desktop       laptop         notifications                │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -165,19 +177,21 @@ All devices synced magically  →    WebSocket mesh over local Wi-Fi
 
 | Layer | Technology | Purpose |
 |:------|:-----------|:--------|
-| **LLM Engine** | Ollama + qwen2.5:1.5b | Brain — reasoning & generation |
-| **STT** | faster-whisper (local) | Speech-to-text transcription |
-| **TTS** | edge-tts | Natural voice synthesis |
-| **Wake Word** | openWakeWord | *"Hey O.V.I."* detection |
-| **PC Automation** | PyAutoGUI + psutil + subprocess | Desktop control & system info |
-| **Screen Vision** | Pillow + LLM multimodal (LLaVA) | Screenshot analysis |
+| **LLM Engine** | Ollama + Qwen3 8B | Brain — all reasoning & generation |
+| **STT** | Faster-Whisper (local) | Speech-to-text transcription |
+| **TTS** | Edge-TTS | Natural voice synthesis |
+| **Wake Word** | OpenWakeWord | *"Hey OVI"* detection |
+| **Desktop App** | Electron + Next.js | Native window, tray, global hotkeys |
+| **PC Automation** | PyAutoGUI + psutil | Desktop control & system info |
+| **Audio Control** | Pycaw + Comtypes | Volume & audio routing |
+| **Tool Router** | Custom (FastAPI + async) | Intent → sandboxed tool execution |
 | **Core Server** | FastAPI + WebSockets | Central hub for all devices |
-| **Memory** | SQLite + ChromaDB | Short + long-term memory |
-| **Web Search** | SearXNG (self-hosted) | Private web search |
-| **Desktop UI** | Next.js | Iron Man-style glass dashboard |
-| **Mobile UI** | React (PWA) | Phone interface |
-| **Device Discovery** | mDNS / Zeroconf | Auto-find devices on Wi-Fi |
-| **Notifications** | WebPush / ntfy.sh | Push notifications to phone |
+| **Memory (Short)** | SQLite + SQLAlchemy | Conversation history |
+| **Memory (Long)** | ChromaDB | Vector embeddings & RAG |
+| **Styling** | Tailwind CSS | Glassmorphism UI |
+| **Animations** | Framer Motion | Smooth UI transitions |
+| **System Tray** | Pystray | Background sentinel presence |
+| **Logging** | Loguru | Structured application logs |
 
 ---
 
@@ -186,77 +200,75 @@ All devices synced magically  →    WebSocket mesh over local Wi-Fi
 ```
 ovi/
 │
-├── core/                           ← O.V.I. Core Server (runs on main PC)
-│   ├── main.py                     ← FastAPI app entry point
-│   ├── config.py                   ← Centralized Pydantic settings
+├── core/                           ← O.V.I. Core Server (The Brain)
+│   ├── main.py                     ← FastAPI app + lifespan management
+│   ├── config.py                   ← Environment & settings
 │   ├── llm/
 │   │   ├── ollama_client.py        ← Async Ollama API wrapper
-│   │   ├── prompt_builder.py       ← System prompt + context builder
+│   │   ├── prompt_builder.py       ← Dynamic system prompt + RAG context
 │   │   └── tool_router.py          ← Parse LLM response → dispatch tools
 │   ├── memory/
-│   │   ├── short_term.py           ← Conversation history manager
-│   │   ├── long_term.py            ← ChromaDB vector memory
-│   │   ├── schema.py               ← SQLAlchemy models
-│   │   └── database.py             ← SQLite async manager
+│   │   ├── database.py             ← SQLAlchemy/SQLite async manager
+│   │   ├── long_term.py            ← ChromaDB vector memory + RAG
+│   │   └── schema.py               ← DB models (messages, users, tools)
 │   ├── voice/
-│   │   ├── stt.py                  ← faster-whisper transcription
-│   │   ├── tts.py                  ← edge-tts voice synthesis
-│   │   └── wake_word.py            ← "Hey O.V.I." always-on listener
-│   ├── tools/                      ← All executable tools
-│   │   ├── base.py                 ← BaseTool interface
-│   │   ├── system_tools.py         ← CPU, RAM, battery, processes
-│   │   ├── app_control.py          ← Open/close/focus applications
-│   │   ├── file_tools.py           ← Find, move, delete, read files
-│   │   ├── browser_tools.py        ← Open URLs, search
-│   │   ├── clipboard_tools.py      ← Read/write clipboard
-│   │   ├── screen_tools.py         ← Screenshot + LLM vision analysis
-│   │   ├── media_tools.py          ← Music, volume, video control
-│   │   ├── code_tools.py           ← Run scripts, check git status
-│   │   ├── web_search.py           ← SearXNG local search
-│   │   └── cross_device.py         ← Ping other agents, send data
-│   ├── agents/
-│   │   ├── agent_registry.py       ← Track connected devices
-│   │   └── agent_protocol.py       ← WebSocket message protocol
+│   │   ├── stt.py                  ← Faster-Whisper transcription
+│   │   ├── tts.py                  ← Edge-TTS voice synthesis
+│   │   └── wake_word.py            ← "Hey OVI" always-on listener
+│   ├── tools/                      ← All executable tools (sandboxed)
+│   │   ├── system_tools.py         ← CPU, RAM, disk, theme control
+│   │   ├── volume_control.py       ← Audio manipulation (pycaw)
+│   │   ├── window_organizer.py     ← Desktop layout management
+│   │   ├── routine_manager.py      ← Automated task scheduling
+│   │   ├── code_tools.py           ← Run scripts, read/write files
+│   │   ├── browser_tools.py        ← Open URLs, web search
+│   │   ├── web_search.py           ← SearXNG integration
+│   │   ├── cross_device.py         ← Mesh agent commands
+│   │   └── git_monitor.py          ← Real-time git status tracking
 │   ├── personality/
-│   │   ├── persona.py              ← O.V.I. personality config
-│   │   └── routines.py             ← Automated routines
+│   │   ├── persona.py              ← Warm persona engine + greetings
+│   │   └── routines.py             ← Proactive behavior triggers
+│   ├── agents/
+│   │   └── agent_registry.py       ← Track connected devices
+│   ├── desktop/
+│   │   └── tray.py                 ← System tray integration
 │   └── api/
-│       ├── chat.py                 ← POST /api/chat
-│       ├── voice.py                ← POST /api/voice
-│       ├── websocket.py            ← WS /ws — real-time bidirectional
-│       ├── health.py               ← GET /health
-│       ├── system.py               ← GET /api/system/stats
-│       ├── devices.py              ← GET /api/devices
-│       └── memory.py               ← GET/POST /api/memory
+│       ├── chat.py                 ← Central brain endpoint
+│       ├── voice.py                ← Audio → transcribe → respond
+│       ├── websocket.py            ← Real-time mesh hub
+│       ├── devices.py              ← List all agents
+│       └── memory.py               ← CRUD for RAG memory
 │
-├── agent/                          ← Lightweight agent (runs on each device)
-│   ├── agent.py                    ← Connects to core, registers capabilities
-│   ├── local_tools.py              ← Device-specific tools
-│   ├── screenshot.py               ← Capture device screen
-│   └── config.json                 ← Device configuration
+├── agent/                          ← Lightweight agent (remote devices)
+│   ├── agent.py                    ← Connects to core, registers tools
+│   └── local_tools.py              ← Device-specific tools
 │
-├── dashboard/                      ← Next.js Desktop UI (glass aesthetic)
+├── dashboard/                      ← Next.js + Electron (The Face)
+│   ├── main.js                     ← Electron entry point
 │   ├── src/
-│   │   ├── app/                    ← App router pages
-│   │   ├── components/             ← GlassPanel, OVIChat, VoiceOrb, etc.
-│   │   └── lib/                    ← O.V.I. client library
-│   └── public/
+│   │   ├── app/                    ← Next.js App Router pages
+│   │   ├── components/             ← Glassmorphism UI components
+│   │   ├── hooks/                  ← useSocket, useVoice, etc.
+│   │   └── lib/                    ← API clients & utils
+│   └── package.json
 │
-├── mobile/                         ← React PWA (phone interface)
-│   ├── src/
-│   │   ├── components/             ← ChatView, VoiceButton, DeviceList
-│   │   └── lib/                    ← O.V.I. client library
-│   └── public/
+├── mobile/                         ← Mobile app (V3 — Future)
 │
-├── services/                       ← Self-hosted supporting services
-│   ├── searxng/                    ← Private local web search
-│   └── ntfy/                       ← Self-hosted push notifications
+├── data/                           ← Local storage (gitignored)
+│   ├── ovi.db                      ← SQLite database
+│   ├── chroma/                     ← ChromaDB vector store
+│   └── logs/                       ← Application logs
 │
-├── data/                           ← Runtime data (gitignored)
-├── docker-compose.yml              ← Run services in one command
+├── scripts/                        ← Utility scripts
+│   ├── manage_startup.py           ← Windows Registry auto-start
+│   └── cleanup_desktop.py          ← Automated desktop cleanup
+│
+├── config/
+│   └── routines.yaml               ← Automated routine definitions
+│
 ├── requirements.txt                ← Python dependencies
 ├── .env.example                    ← Environment config template
-└── IMPLEMENTATION.md               ← Detailed implementation guide
+└── launch_ovi.bat                  ← Boot launcher
 ```
 
 ---
@@ -270,16 +282,16 @@ ovi/
 | **Python** | 3.11+ | 3.12 |
 | **RAM** | 8 GB | 16 GB+ |
 | **GPU** | None (CPU works) | NVIDIA GTX 1060+ |
-| **OS** | Windows 10 / Ubuntu 20.04 | Windows 11 / Ubuntu 22.04 |
+| **OS** | Windows 10 | Windows 11 |
 | **Node.js** | 18+ | 20 LTS |
-| **Docker** | Latest | Latest |
+| **Ollama** | Latest | Latest |
 
 ### 1. Install Ollama
 
 ```bash
 # Download from https://ollama.com/download
 # Then pull a model:
-ollama pull qwen2.5:1.5b
+ollama pull qwen3:8b
 ```
 
 ### 2. Clone & Setup
@@ -291,7 +303,6 @@ cd O.V.I.
 # Create virtual environment
 python -m venv venv
 venv\Scripts\activate        # Windows
-# source venv/bin/activate   # Linux/macOS
 
 # Install dependencies
 pip install -r requirements.txt
@@ -322,97 +333,60 @@ npm run dev
 
 | Interface | URL |
 |:----------|:----|
-| **Dashboard** | `http://192.168.x.x:3000` |
-| **API** | `http://192.168.x.x:8000` |
-| **Health Check** | `http://192.168.x.x:8000/health` |
-| **API Docs** | `http://192.168.x.x:8000/docs` |
-
-> Replace `192.168.x.x` with your PC's local IP address.
-
-### 6. (Optional) Start Docker Services
-
-```bash
-# For SearXNG web search & ntfy notifications
-docker compose up -d
-```
-
----
-
-## 🌐 Deployment Map
-
-Everything runs **locally on your Wi-Fi** — zero internet required for core functionality.
-
-| Service | Host | Port |
-|:--------|:-----|:-----|
-| O.V.I. Core (FastAPI) | Main PC | `:8000` |
-| Ollama LLM | Main PC | `:11434` |
-| Dashboard (Next.js) | Main PC | `:3000` |
-| SearXNG (search) | Main PC (Docker) | `:8080` |
-| ntfy (notifications) | Main PC (Docker) | `:8090` |
-| Device Agents | Laptop / other PCs | → connects to `:8000` |
-| Mobile PWA | Phone browser | → accesses `:3000` |
+| **Dashboard** | `http://localhost:3000` |
+| **API** | `http://localhost:8000` |
+| **Health Check** | `http://localhost:8000/health` |
+| **API Docs** | `http://localhost:8000/docs` |
 
 ---
 
 ## 💬 Example Commands
 
 ```
-"Hey O.V.I., open my projects folder"
+"Hey OVI, open my projects folder"
 "How much RAM is being used right now?"
-"Send a notification to my phone — meeting in 5 minutes"
-"What files did I work on yesterday?"
+"Set up my coding environment"
+    → Opens VS Code, starts dev servers, sets dark mode, volume to 20%
 "Take a screenshot and tell me what's on my screen"
-"Search for the best Python async tutorial"
-"Run my Flask server"
-"Play something on Spotify"
+"Volume to 30%"
 "What did I ask you about last week?"
-"Copy the last thing I typed to my phone clipboard"
-"Good night"  →  closes apps, sets volume to 0, dims screen
+"Remember that my standup is at 10 AM every day"
+"What am I working on today?"
+    → Pulls from memory: "You mentioned working on OVI V2 yesterday"
+"Good night"
+    → Closes apps, sets volume to 0, dims screen
 ```
 
----
-
-## 🗺️ Roadmap
-
-| Phase | Milestone | Status |
-|:------|:----------|:-------|
-| **Phase 1** — The Brain | Ollama + FastAPI + 5 core tools | 🔨 In Progress |
-| **Phase 2** — The Voice | Wake word + STT + TTS pipeline | ⏳ Planned |
-| **Phase 3** — The Dashboard | Iron Man glass UI + live stats | ⏳ Planned |
-| **Phase 4** — Multi-Device | Agent mesh + mobile PWA | ⏳ Planned |
-| **Phase 5** — Memory & Personality | Long-term memory + routines | ⏳ Planned |
-
-> See [IMPLEMENTATION.md](IMPLEMENTATION.md) for the complete technical implementation guide.
 
 ---
 
 ## 🔑 What Makes O.V.I. Different
 
-| Feature | Siri / Alexa | Open WebUI | O.V.I. |
-|:--------|:-------------|:-----------|:-------|
-| Fully local | ❌ | ✅ | ✅ |
-| Multi-device mesh | ❌ | ❌ | ✅ |
-| PC automation | Partial | ❌ | ✅ |
-| Screen vision | ❌ | Partial | ✅ |
-| Cross-device file ops | ❌ | ❌ | ✅ |
-| Custom wake word | ❌ | ❌ | ✅ |
-| Iron Man-style UI | ❌ | ❌ | ✅ |
-| Long-term memory | Limited | ❌ | ✅ |
-| No subscription | ❌ | ✅ | ✅ |
-| Works offline | ❌ | ✅ | ✅ |
+| Feature | Siri / Alexa | ChatGPT | Open WebUI | O.V.I. |
+|:--------|:-------------|:--------|:-----------|:-------|
+| Fully local | ❌ | ❌ | ✅ | ✅ |
+| Native desktop app | ❌ | ❌ | ❌ | ✅ |
+| Multi-device mesh | ❌ | ❌ | ❌ | ✅ |
+| PC automation | Partial | ❌ | ❌ | ✅ |
+| Screen vision | ❌ | Partial | Partial | ✅ |
+| Cross-device file ops | ❌ | ❌ | ❌ | ✅ |
+| Custom wake word | ❌ | ❌ | ❌ | ✅ |
+| Self-training memory | Limited | Limited | ❌ | ✅ |
+| Global hotkey summon | ❌ | ❌ | ❌ | ✅ |
+| No subscription | ❌ | ❌ | ✅ | ✅ |
+| Works offline | ❌ | ❌ | ✅ | ✅ |
 
 ---
 
-## 🧰 Hardware Setup
+## 🧰 Hardware
 
 | Device | Role | Minimum |
 |:-------|:-----|:--------|
 | **Main PC** | Core server + Ollama brain | 16 GB RAM, GPU optional |
-| **Laptop** | Secondary agent | 8 GB RAM, Python installed |
-| **Android Phone** | Mobile agent (PWA) | Any modern Android browser |
-| **Router** | Local network hub | Any home Wi-Fi router |
+| **Laptop** | Secondary agent | 8 GB RAM, Python |
+| **Android Phone** | Mobile agent (V3) | Any modern Android |
 
-> **GPU note:** A GPU (even GTX 1060) makes Ollama run **10x faster**. Without GPU, Qwen3 4B still works at ~5-8 tokens/sec on CPU — usable but not instant.
+> **GPU note:** A GPU (even GTX 1060) makes Ollama run **10x faster**. Without GPU, Qwen3 models still work at ~5-8 tokens/sec on CPU — usable but not instant.
 
 ---
 
@@ -421,9 +395,9 @@ Everything runs **locally on your Wi-Fi** — zero internet required for core fu
 Contributions are welcome! Please read the implementation guide first:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create your feature branch (`git checkout -b feat/your-feature`)
+3. Commit your changes (`git commit -m 'Add your feature'`)
+4. Push to the branch (`git push origin feat/your-feature`)
 5. Open a Pull Request
 
 ---
@@ -438,12 +412,6 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 <br/>
 
-**Built with ❤️ by [Pushkar](https://github.com/pushkar156)**
-
-*O.V.I. — Because your AI should work for you, not the other way around.*
-
-<br/>
-
-[![GitHub Stars](https://img.shields.io/github/stars/pushkar156/O.V.I.?style=social)](https://github.com/pushkar156/O.V.I.)
+**Built by [Pushkar](https://github.com/pushkar156)**. Powered by Ollama. Inspired by Jarvis. Owned by Tony Stark.
 
 </div>
