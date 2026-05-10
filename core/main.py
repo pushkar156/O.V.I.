@@ -9,7 +9,8 @@ from core.api import chat, voice, websocket, devices, memory
 from core.llm.ollama_client import ollama_client
 from core.llm.tool_router import tool_router
 from core.tools import ALL_TOOLS
-from core.memory.database import init_db
+from core.memory.database import init_db, close_db
+import asyncio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,7 +36,6 @@ async def lifespan(app: FastAPI):
             tool_router.register_tool(tool.name, tool.execute)
         
         # 4. Start Telemetry Heartbeat
-        import asyncio
         async def telemetry_heartbeat():
             while True:
                 try:
@@ -77,6 +77,11 @@ async def lifespan(app: FastAPI):
     finally:
         # Shutdown logic
         logger.info("Shutting down O.V.I. Core Systems...")
+        try:
+            await close_db()
+            logger.success("Clean Shutdown Complete. Data persisted safely.")
+        except Exception as e:
+            logger.error(f"Error during shutdown: {e}")
 
 app = FastAPI(
     title="O.V.I. Core Server",

@@ -1,6 +1,7 @@
 import os
 import io
 import torch
+import asyncio
 from faster_whisper import WhisperModel
 from loguru import logger
 from typing import Optional
@@ -24,28 +25,24 @@ class STTManager:
 
     async def transcribe(self, audio_data: bytes) -> str:
         """
-        Transcribes raw audio bytes into text.
-        Expected audio: 16-bit PCM, 16kHz mono.
+        Transcribes raw audio bytes into text securely via thread offloading.
         """
         try:
-            # Convert bytes to file-like object
-            audio_file = io.BytesIO(audio_data)
-            
-            # Transcribe with VAD (Voice Activity Detection) to skip silence
-            segments, info = self.model.transcribe(
-                audio_file, 
-                beam_size=5, 
-                vad_filter=True,
-                vad_parameters=dict(min_silence_duration_ms=500)
-            )
-            
-            # Combine segments into a single string
-            text = " ".join([segment.text for segment in segments]).strip()
-            return text
-            
+            return await asyncio.to_thread(self._sync_transcribe, audio_data)
         except Exception as e:
             logger.error(f"STT Transcription failed: {e}")
             return ""
+
+    def _sync_transcribe(self, audio_data: bytes) -> str:
+        """Synchronous helper for thread-based transcription."""
+        audio_file = io.BytesIO(audio_data)
+        segments, info = self.model.transcribe(
+            audio_file, 
+            beam_size=5, 
+            vad_filter=True,
+            vad_parameters=dict(min_silence_duration_ms=500)
+        )
+        return " ".join([segment.text for segment in segments]).strip()
 
 # Default instance (lazy loaded on first use if needed)
 stt_manager: Optional[STTManager] = None
