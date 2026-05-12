@@ -39,7 +39,8 @@ class TTSProvider:
             logger.error(f"TTS Error: {e}")
 
 # Singleton instance
-tts_provider = TTSProvider()
+tts_manager = TTSProvider()
+tts_provider = tts_manager # Alias for backward compatibility
 
 if __name__ == "__main__":
     async def test():

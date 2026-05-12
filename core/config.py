@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     SERVER_HOST: str = "0.0.0.0"
     SERVER_PORT: int = 8000
     LOG_LEVEL: str = "INFO"
+    OVI_TOKEN: str = "ovi-dev-token" # Default for local dev, override in .env
 
     # LLM Configuration
     OLLAMA_URL: str = "http://127.0.0.1:11434"
