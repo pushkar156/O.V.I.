@@ -31,3 +31,36 @@
     -webkit-app-region: no-drag;
   }
 }
+
+/* Premium App Feel */
+body {
+  user-select: none; /* Disable text selection globally */
+  -webkit-user-select: none;
+  cursor: default;
+  overflow: auto; /* Restore scroll */
+}
+
+input, textarea, [contenteditable="true"] {
+  user-select: text !important; /* Allow selection in inputs */
+  -webkit-user-select: text !important;
+  cursor: text;
+}
+
+/* Sleek Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(175, 62, 62, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(175, 62, 62, 0.4);
+}

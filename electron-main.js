@@ -1,4 +1,4 @@
-const { app, BrowserWindow, globalShortcut, Tray, Menu, nativeImage } = require('electron');
+const { app, BrowserWindow, globalShortcut, Tray, Menu, nativeImage, ipcMain } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const { spawn } = require('child_process');
@@ -10,13 +10,16 @@ let pythonProcess = null;
 
 function startBackend() {
   const pythonPath = path.join(__dirname, 'venv', 'Scripts', 'python.exe');
-  const scriptPath = path.join(__dirname, 'core', 'main.py');
   
   console.log('Starting Python backend...');
   
-  pythonProcess = spawn(pythonPath, [scriptPath], {
+  pythonProcess = spawn(pythonPath, ['-m', 'core.main'], {
     cwd: __dirname,
-    env: { ...process.env, PYTHONUNBUFFERED: '1' }
+    env: { 
+      ...process.env, 
+      PYTHONUNBUFFERED: '1',
+      PYTHONPATH: __dirname // Ensure root is in path
+    }
   });
 
   pythonProcess.stdout.on('data', (data) => {
@@ -40,11 +43,24 @@ function createWindow() {
     frame: false,
     transparent: true,
     backgroundColor: '#00000000',
+    titleBarStyle: 'hidden',
+    backgroundMaterial: 'mica',
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false, // Security best practice
+      contextIsolation: true, // Required for contextBridge
       preload: path.join(__dirname, 'preload.js'),
+      devTools: isDev
     },
+  });
+
+  // Disable zooming and standard browser shortcuts
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if ((input.control || input.meta) && (input.key === '=' || input.key === '-' || input.key === '0')) {
+      event.preventDefault();
+    }
+    if (!isDev && (input.control || input.meta) && input.key.toLowerCase() === 'r') {
+      event.preventDefault();
+    }
   });
 
   const startURL = isDev 
@@ -150,4 +166,13 @@ app.on('web-contents-created', (event, contents) => {
       event.preventDefault();
     }
   });
+});
+
+// IPC Listeners for Window Controls
+ipcMain.on('window-minimize', () => {
+  if (mainWindow) mainWindow.minimize();
+});
+
+ipcMain.on('window-close', () => {
+  if (mainWindow) mainWindow.close(); // This will trigger the 'close' event (hide to tray)
 });

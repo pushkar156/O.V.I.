@@ -11,6 +11,18 @@ export function NavigationLayout({ children }: { children: React.ReactNode }) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  
+  const handleMinimize = () => {
+    if (window.electron) {
+      window.electron.minimize();
+    }
+  };
+
+  const handleClose = () => {
+    if (window.electron) {
+      window.electron.close();
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -139,6 +151,22 @@ export function NavigationLayout({ children }: { children: React.ReactNode }) {
             <button className="p-2 text-[#AF3E3E]/80 dark:text-[#ffb3ae] hover:text-[#CD5656] dark:hover:bg-[#353534]/50 rounded-lg transition-colors"><span className="material-symbols-outlined">notifications</span></button>
             <div className="h-8 w-8 rounded-full border-2 border-[#CD5656] dark:border-[#ffb3ae]/20 overflow-hidden ml-2">
                 <div className="w-full h-full bg-[#CD5656] dark:bg-[#1c1b1b]" />
+            </div>
+
+            {/* Window Controls */}
+            <div className="flex items-center gap-1 ml-4 border-l border-[#AF3E3E]/10 dark:border-white/10 pl-4">
+              <button 
+                onClick={handleMinimize}
+                className="p-1.5 text-[#AF3E3E]/60 dark:text-white/40 hover:bg-[#DA6C6C]/10 dark:hover:bg-white/5 rounded-md transition-colors"
+              >
+                <span className="material-symbols-outlined text-[18px]">remove</span>
+              </button>
+              <button 
+                onClick={handleClose}
+                className="p-1.5 text-[#AF3E3E]/60 dark:text-white/40 hover:bg-red-500/20 hover:text-red-500 rounded-md transition-colors"
+              >
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
             </div>
           </div>
         </div>
