@@ -22,4 +22,45 @@
     mask-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' viewBox='0 0 1000 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 100 Q 250 50 500 100 T 1000 100' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E");
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' viewBox='0 0 1000 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 100 Q 250 50 500 100 T 1000 100' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E");
   }
+
+  .electron-drag {
+    -webkit-app-region: drag;
+  }
+
+  .electron-no-drag {
+    -webkit-app-region: no-drag;
+  }
+}
+
+/* Premium App Feel */
+body {
+  user-select: none; /* Disable text selection globally */
+  -webkit-user-select: none;
+  cursor: default;
+  overflow: auto; /* Restore scroll */
+}
+
+input, textarea, [contenteditable="true"] {
+  user-select: text !important; /* Allow selection in inputs */
+  -webkit-user-select: text !important;
+  cursor: text;
+}
+
+/* Sleek Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(175, 62, 62, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(175, 62, 62, 0.4);
 }
