@@ -1,25 +1,52 @@
-const { app, BrowserWindow, globalShortcut, Tray, Menu } = require('electron');
+const { app, BrowserWindow, globalShortcut, Tray, Menu, nativeImage } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
+const { spawn } = require('child_process');
 
 let mainWindow;
 let tray;
+let isQuitting = false;
+let pythonProcess = null;
+
+function startBackend() {
+  const pythonPath = path.join(__dirname, 'venv', 'Scripts', 'python.exe');
+  const scriptPath = path.join(__dirname, 'core', 'main.py');
+  
+  console.log('Starting Python backend...');
+  
+  pythonProcess = spawn(pythonPath, [scriptPath], {
+    cwd: __dirname,
+    env: { ...process.env, PYTHONUNBUFFERED: '1' }
+  });
+
+  pythonProcess.stdout.on('data', (data) => {
+    console.log(`[Backend]: ${data}`);
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`[Backend Error]: ${data}`);
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`Backend process exited with code ${code}`);
+  });
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    show: false, // Don't show until ready-to-show
-    frame: false, // Frameless for that sleek AI feel
-    transparent: true, // Allows for glassmorphism effects
+    show: false,
+    frame: false,
+    transparent: true,
+    backgroundColor: '#00000000',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      preload: path.join(__dirname, 'preload.js'), // We'll create this next
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
 
-  // In development, load the Next.js dev server
   const startURL = isDev 
     ? 'http://localhost:3000' 
     : `file://${path.join(__dirname, './out/index.html')}`;
@@ -28,9 +55,14 @@ function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
-    if (isDev) {
-      mainWindow.webContents.openDevTools({ mode: 'detach' });
+  });
+
+  mainWindow.on('close', (event) => {
+    if (!isQuitting) {
+      event.preventDefault();
+      mainWindow.hide();
     }
+    return false;
   });
 
   mainWindow.on('closed', () => {
@@ -38,8 +70,40 @@ function createWindow() {
   });
 }
 
-// Global hotkey to "Summon" O.V.I. (Task 2.2)
+function createTray() {
+  const iconPath = path.join(__dirname, 'assets/icon.png');
+  const icon = nativeImage.createFromPath(iconPath).resize({ width: 16, height: 16 });
+  
+  tray = new Tray(icon);
+  const contextMenu = Menu.buildFromTemplate([
+    { 
+      label: 'Show O.V.I.', 
+      click: () => {
+        mainWindow.show();
+        mainWindow.focus();
+      } 
+    },
+    { type: 'separator' },
+    { 
+      label: 'Quit O.V.I.', 
+      click: () => {
+        isQuitting = true;
+        app.quit();
+      } 
+    }
+  ]);
+
+  tray.setToolTip('O.V.I. Sentinel');
+  tray.setContextMenu(contextMenu);
+
+  tray.on('double-click', () => {
+    mainWindow.show();
+    mainWindow.focus();
+  });
+}
+
 function registerHotkeys() {
+  globalShortcut.unregisterAll();
   globalShortcut.register('CommandOrControl+O', () => {
     if (mainWindow) {
       if (mainWindow.isVisible()) {
@@ -53,23 +117,23 @@ function registerHotkeys() {
 }
 
 app.on('ready', () => {
+  startBackend();
   createWindow();
+  createTray();
   registerHotkeys();
-  
-  // Set up a basic Tray icon (Task 2.4)
-  // Note: You'll need an icon file eventually, using a placeholder for now
-  // tray = new Tray(path.join(__dirname, 'assets/icon.png'));
-  // const contextMenu = Menu.buildFromTemplate([
-  //   { label: 'Show O.V.I.', click: () => mainWindow.show() },
-  //   { label: 'Quit', click: () => app.quit() }
-  // ]);
-  // tray.setToolTip('O.V.I. Sentinel');
-  // tray.setContextMenu(contextMenu);
 });
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+// Ensure Python backend dies when Electron dies
+app.on('will-quit', () => {
+  if (pythonProcess) {
+    console.log('Stopping Python backend...');
+    pythonProcess.kill();
   }
 });
 
@@ -79,7 +143,6 @@ app.on('activate', () => {
   }
 });
 
-// Security: Disable certain navigations
 app.on('web-contents-created', (event, contents) => {
   contents.on('will-navigate', (event, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
