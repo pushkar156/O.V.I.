@@ -38,6 +38,21 @@ class TTSProvider:
         except Exception as e:
             logger.error(f"TTS Error: {e}")
 
+    async def synthesize(self, text: str) -> bytes:
+        """
+        Generates speech and returns the raw audio bytes.
+        """
+        output_file = os.path.join(self.output_dir, "last_response.mp3")
+        try:
+            communicate = edge_tts.Communicate(text, self.voice)
+            await communicate.save(output_file)
+            
+            with open(output_file, "rb") as f:
+                return f.read()
+        except Exception as e:
+            logger.error(f"TTS Synthesis failed: {e}")
+            return b""
+
 # Singleton instance
 tts_manager = TTSProvider()
 tts_provider = tts_manager # Alias for backward compatibility

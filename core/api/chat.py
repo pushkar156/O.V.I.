@@ -11,6 +11,7 @@ from core.memory.short_term import memory_manager
 from core.memory.long_term import long_term_memory
 from core.agents.agent_registry import agent_registry
 from core.personality.routines import routine_manager
+from core.memory.sentinel import sentinel
 
 router = APIRouter(prefix="/api/chat", tags=["Chat"])
 
@@ -54,11 +55,10 @@ async def chat_endpoint(request: ChatRequest):
     context["agents"] = online_agents
     context["agent_count"] = len(online_agents)
     
-    # 1.5 Fetch Semantic Memories (RAG)
-    memories = await long_term_memory.recall(request.message, limit=3)
-    if memories:
-        # Extract content for the prompt
-        context["preferences"] = "\n".join([f"- {m['content']}" for m in memories])
+    # 1.5 Fetch Proactive Context (3.3)
+    recalled_context = await sentinel.get_proactive_context(request.message)
+    if recalled_context:
+        context["preferences"] = recalled_context
     
     tool_defs = get_tool_definitions()
     system_prompt = prompt_builder.build_system_prompt(tools=tool_defs, context=context)
@@ -129,11 +129,9 @@ async def chat_endpoint(request: ChatRequest):
         # 7. Persist Assistant Response
         await memory_manager.add_message(conv_id, "assistant", content)
 
-        # 8. Store in Long-Term Memory (Asynchronous background task)
-        # We store the user's message to build up the knowledge base over time.
-        # In a future update, we can have the LLM decide if it's a 'preference' vs a 'fact'.
+        # 8. Intelligent Fact Extraction (3.1) - Background task
         import asyncio
-        asyncio.create_task(long_term_memory.store_memory(request.message, category="conversation"))
+        asyncio.create_task(sentinel.extract_facts(conv_id))
 
         return ChatResponse(
             response=content,

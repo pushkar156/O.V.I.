@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     # LLM Configuration
     OLLAMA_URL: str = "http://127.0.0.1:11434"
     DEFAULT_MODEL: str = "qwen2.5:1.5b"
+    # Voice & Audio
+    FFMPEG_PATH: str = r"E:\ffmpeg-2026-05-11-git-17bc88e67f-full_build\bin"
+    DEFAULT_VOICE: str = "en-US-AvaNeural"
 
     # Memory Configuration
     MEMORY_DB_PATH: str = "./data/ovi.db"
