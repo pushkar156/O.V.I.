@@ -25,11 +25,14 @@ async def voice_command(audio: UploadFile = File(...)):
     try:
         # 1. Transcribe the audio
         audio_bytes = await audio.read()
+        logger.debug(f"Received audio data: {len(audio_bytes)} bytes, content_type: {audio.content_type}")
+        
+        if len(audio_bytes) < 1000:
+            logger.warning("Received very small audio file. Recording might have failed.")
+            return {"error": "Audio too short", "response": "I'm sorry, I couldn't hear anything. Please try again."}
+
         stt = get_stt_manager()
         text_command = await stt.transcribe(audio_bytes)
-        
-        if not text_command:
-            return {"error": "Could not understand audio", "response": "I'm sorry, I couldn't hear you clearly."}
             
         logger.info(f"Transcribed voice command: {text_command}")
         

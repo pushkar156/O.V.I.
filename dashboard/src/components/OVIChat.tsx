@@ -65,14 +65,40 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
       setIsRecording(false);
       setVolume(0);
       const audioBlob = await oviClient.stopRecording();
-      // Simulation:
-      const userMsg: Message = { id: Date.now().toString(), role: 'user', content: "Voice command received." };
-      setMessages(prev => [...prev, userMsg]);
+      
+      try {
+        // 1. Send real audio to backend
+        const response = await oviClient.sendVoiceCommand(audioBlob);
+        
+        // 2. Add user transcription to chat
+        const userMsg: Message = { 
+          id: Date.now().toString(), 
+          role: 'user', 
+          content: response.transcription 
+        };
+        setMessages(prev => [...prev, userMsg]);
 
-      setTimeout(() => {
-        const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: "Voice processed. Running command." };
+        // 3. Add AI response to chat
+        const aiMsg: Message = { 
+          id: (Date.now() + 1).toString(), 
+          role: 'assistant', 
+          content: response.response 
+        };
         setMessages(prev => [...prev, aiMsg]);
-      }, 800);
+
+        // 4. Play the AI's voice response
+        if (response.audio_url) {
+          oviClient.playResponse(response.audio_url);
+        }
+      } catch (error) {
+        console.error("Voice Error:", error);
+        const errorMsg: Message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: "I'm sorry, I encountered an error processing your voice command."
+        };
+        setMessages(prev => [...prev, errorMsg]);
+      }
     } else {
       await oviClient.startRecording((vol) => setVolume(vol));
       setIsRecording(true);

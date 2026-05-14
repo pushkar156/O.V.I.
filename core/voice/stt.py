@@ -35,14 +35,41 @@ class STTManager:
 
     def _sync_transcribe(self, audio_data: bytes) -> str:
         """Synchronous helper for thread-based transcription."""
-        audio_file = io.BytesIO(audio_data)
-        segments, info = self.model.transcribe(
-            audio_file, 
-            beam_size=5, 
-            vad_filter=True,
-            vad_parameters=dict(min_silence_duration_ms=500)
-        )
-        return " ".join([segment.text for segment in segments]).strip()
+        try:
+            from pydub import AudioSegment
+            from core.config import settings
+            import os
+
+            # Tell pydub exactly where ffmpeg is
+            if settings.FFMPEG_PATH:
+                AudioSegment.converter = os.path.join(settings.FFMPEG_PATH, "ffmpeg.exe")
+                AudioSegment.ffprobe = os.path.join(settings.FFMPEG_PATH, "ffprobe.exe")
+
+            # 1. Load audio from bytes (supports webm, ogg, wav, etc.)
+            audio = AudioSegment.from_file(io.BytesIO(audio_data))
+            
+            # 2. Normalize to 16kHz Mono (Whisper's favorite)
+            audio = audio.set_frame_rate(16000).set_channels(1)
+            
+            # 3. Export to wav buffer
+            buffer = io.BytesIO()
+            audio.export(buffer, format="wav")
+            buffer.seek(0)
+            
+            # 4. Transcribe
+            segments, info = self.model.transcribe(
+                buffer, 
+                beam_size=5, 
+                vad_filter=True,
+                vad_parameters=dict(min_silence_duration_ms=500)
+            )
+            return " ".join([segment.text for segment in segments]).strip()
+        except Exception as e:
+            logger.error(f"Audio conversion/transcription failed: {e}")
+            # Fallback to direct transcription if pydub fails
+            audio_file = io.BytesIO(audio_data)
+            segments, info = self.model.transcribe(audio_file, beam_size=5)
+            return " ".join([segment.text for segment in segments]).strip()
 
 # Default instance (lazy loaded on first use if needed)
 stt_manager: Optional[STTManager] = None
