@@ -2,24 +2,96 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --sentinel-blue: #00d4ff;
+  --sentinel-purple: #7000ff;
+  --sentinel-bg: #0a0a0b;
+  --sentinel-glass: rgba(255, 255, 255, 0.03);
+  --sentinel-border: rgba(255, 255, 255, 0.08);
+}
+
 @layer base {
+  body {
+    background-color: var(--sentinel-bg);
+    color: #e2e2e2;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: default;
+    overflow: hidden;
+  }
+
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 }
 
 @layer utilities {
+  .glass-card {
+    background: var(--sentinel-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--sentinel-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  }
+
+  .sentinel-glow {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.1),
+                inset 0 0 20px rgba(0, 212, 255, 0.05);
+  }
+
+  .sentinel-gradient-text {
+    background: linear-gradient(135deg, var(--sentinel-blue) 0%, var(--sentinel-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+
+  .electron-drag {
+    -webkit-app-region: drag;
   }
 
-  .listening-wave {
-    background: linear-gradient(90deg, #F59E0B 0%, #D97706 50%, #B45309 100%);
-    mask-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' viewBox='0 0 1000 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 100 Q 250 50 500 100 T 1000 100' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E");
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' viewBox='0 0 1000 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 100 Q 250 50 500 100 T 1000 100' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E");
+  .electron-no-drag {
+    -webkit-app-region: no-drag;
   }
+
+  /* Dynamic Waveform for Thinking State */
+  .thinking-wave {
+    background: linear-gradient(90deg, var(--sentinel-blue) 0%, var(--sentinel-purple) 50%, var(--sentinel-blue) 100%);
+    background-size: 200% 100%;
+    animation: wave-flow 2s linear infinite;
+  }
+}
+
+@keyframes wave-flow {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+input, textarea, [contenteditable="true"] {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text;
+}
+
+/* Sleek Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sentinel-blue);
 }

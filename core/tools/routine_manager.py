@@ -51,8 +51,8 @@ class RoutineManager:
         if action == "open_app":
             path = params.get('path')
             args = params.get('args', [])
-            # Using subprocess.Popen to not block
-            subprocess.Popen([path] + args, shell=True)
+            # Using subprocess.Popen with shell=False for security
+            subprocess.Popen([path] + args, shell=False)
             
         elif action == "open_url":
             url = params.get('url')
@@ -66,7 +66,8 @@ class RoutineManager:
         elif action == "run_script":
             script = params.get('script')
             if os.path.exists(script):
-                subprocess.Popen(["python", script], shell=True)
+                # Using subprocess.Popen with shell=False for security
+                subprocess.Popen(["python", script], shell=False)
             else:
                 logger.warning(f"Script not found: {script}")
                 

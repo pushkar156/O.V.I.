@@ -3,6 +3,7 @@ import re
 import inspect
 from typing import Dict, Any, Optional, Tuple
 from loguru import logger
+from core.memory.long_term import long_term_memory
 
 class ToolRouter:
     """
@@ -48,6 +49,22 @@ class ToolRouter:
             else:
                 # Sync tool — call with unpacked arguments
                 result = func(**args)
+            
+            # Self-Healing: Store 'Success Patterns' for future reference
+            is_success = False
+            if hasattr(result, 'success'):
+                is_success = result.success
+            elif isinstance(result, dict):
+                is_success = result.get("success", True)
+            else:
+                is_success = True # Assume success if no flag provided
+
+            if is_success:
+                import asyncio
+                # Store the intent and the successful tool call structure
+                # We use the text context to link the user's intent to the tool
+                pattern = f"Intent context: {text[:100]} | Successful Tool: {tool_name} | Args: {json.dumps(args)}"
+                asyncio.create_task(long_term_memory.store_memory(pattern, category="success_pattern"))
             
             return tool_name, result
         except Exception as e:

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from typing import List, Dict, Any
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Header, status
+from typing import List, Dict, Any, Optional
 from loguru import logger
 import json
 import time
 from core.agents.agent_registry import agent_registry
+from core.config import settings
 
 router = APIRouter(prefix="/ws", tags=["WebSocket"])
 
@@ -86,8 +87,16 @@ async def websocket_dashboard(websocket: WebSocket):
         manager.disconnect(websocket)
 
 @router.websocket("/agent")
-async def websocket_agent(websocket: WebSocket):
+async def websocket_agent(websocket: WebSocket, x_ovi_token: Optional[str] = Header(None)):
     """Endpoint for secondary device agents (laptops, etc.) to connect."""
+    # Verify Token
+    if x_ovi_token != settings.OVI_TOKEN:
+        logger.warning(f"Unauthorized agent connection attempt. Token: {x_ovi_token}")
+        # Note: In standard browser WS, headers aren't supported easily.
+        # But for OVI agents (Python/Custom), we enforce this.
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+
     await websocket.accept()
     agent_name = "unknown"
     

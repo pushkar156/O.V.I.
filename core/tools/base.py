@@ -1,6 +1,33 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from pydantic import BaseModel
+import subprocess
+
+class ToolSandbox:
+    """
+    Secure execution environment for system tools.
+    Prevents shell injection by enforcing list-based arguments and shell=False.
+    """
+    def run_command(self, args: List[str], timeout: int = 30) -> subprocess.CompletedProcess:
+        if not args:
+            raise ValueError("Command arguments list cannot be empty")
+        
+        try:
+            return subprocess.run(
+                args,
+                shell=False, # CRITICAL: Prevents shell injection
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                check=False
+            )
+        except subprocess.TimeoutExpired:
+            return subprocess.CompletedProcess(args, 1, stderr="Command timed out", stdout="")
+        except Exception as e:
+            return subprocess.CompletedProcess(args, 1, stderr=str(e), stdout="")
+
+# Singleton instance for internal use
+tool_sandbox = ToolSandbox()
 
 class ToolResult(BaseModel):
     """Standardized result format for all tools."""

@@ -9,7 +9,8 @@ from core.api import chat, voice, websocket, devices, memory
 from core.llm.ollama_client import ollama_client
 from core.llm.tool_router import tool_router
 from core.tools import ALL_TOOLS
-from core.memory.database import init_db
+from core.memory.database import init_db, close_db
+import asyncio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,7 +36,6 @@ async def lifespan(app: FastAPI):
             tool_router.register_tool(tool.name, tool.execute)
         
         # 4. Start Telemetry Heartbeat
-        import asyncio
         async def telemetry_heartbeat():
             while True:
                 try:
@@ -48,25 +48,35 @@ async def lifespan(app: FastAPI):
         asyncio.create_task(telemetry_heartbeat())
 
         # 5. Start Wake Word Listener
-        from core.voice.wake_word import wake_listener
-        from core.api.websocket import manager
-        from core.voice.tts import tts_provider
-
-        async def handle_wake():
-            logger.info("Handling Wake Word trigger...")
-            # 1. Notify Dashboard for visual feedback
-            await manager.broadcast({
-                "type": "wake",
-                "status": "active",
-                "timestamp": time.time()
-            })
-            
-            # 2. Voice Response
-            await tts_provider.speak("I am here. How can I assist?")
-            
-            logger.success("O.V.I. is now listening.")
-
-        asyncio.create_task(wake_listener.start(on_wake=handle_wake))
+        try:
+            from core.voice.wake_word import wake_listener
+            from core.api.websocket import manager
+            from core.voice.tts import tts_provider
+    
+            async def handle_wake():
+                logger.info("Handling Wake Word trigger...")
+                # 1. Disable listener while speaking
+                wake_listener.ignore_audio = True
+                
+                try:
+                    # 2. Notify Dashboard for visual feedback
+                    await manager.broadcast({
+                        "type": "wake",
+                        "status": "active",
+                        "timestamp": time.time()
+                    })
+                    
+                    # 3. Voice Response
+                    await tts_provider.speak("I am here. How can I assist?")
+                    
+                    logger.success("O.V.I. is now listening.")
+                finally:
+                    # 4. Re-enable listener
+                    wake_listener.ignore_audio = False
+    
+            asyncio.create_task(wake_listener.start(on_wake=handle_wake))
+        except Exception as e:
+            logger.error(f"Failed to start Wake Word listener: {e}. Voice commands will still work via button.")
         
         logger.success("O.V.I. Core Systems Online and Ready.")
         yield
@@ -77,6 +87,11 @@ async def lifespan(app: FastAPI):
     finally:
         # Shutdown logic
         logger.info("Shutting down O.V.I. Core Systems...")
+        try:
+            await close_db()
+            logger.success("Clean Shutdown Complete. Data persisted safely.")
+        except Exception as e:
+            logger.error(f"Error during shutdown: {e}")
 
 app = FastAPI(
     title="O.V.I. Core Server",

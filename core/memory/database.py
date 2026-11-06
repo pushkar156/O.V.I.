@@ -37,3 +37,11 @@ async def get_db():
     """Dependency for getting an async database session."""
     async with AsyncSessionLocal() as session:
         yield session
+
+async def close_db():
+    """Closes the database engine connections."""
+    try:
+        await engine.dispose()
+        logger.info("Database engine disposed.")
+    except Exception as e:
+        logger.error(f"Error disposing database engine: {e}")

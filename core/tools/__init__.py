@@ -1,6 +1,6 @@
-from core.tools.system_tools import SystemInfoTool, TimeTool, SetSystemThemeTool
+from core.tools.system_tools import SystemInfoTool, TimeTool, SetSystemThemeTool, ProcessControlTool, PowerControlTool
 from core.tools.app_control import OpenAppTool, CloseAppTool
-from core.tools.file_tools import ListDirectoryTool, ReadFileTool, SearchFilesTool
+from core.tools.file_tools import ListDirectoryTool, ReadFileTool, SearchFilesTool, WriteFileTool, EditFileTool
 from core.tools.browser_tools import OpenURLTool, WebSearchTool
 from core.tools.clipboard_tools import ReadClipboardTool, WriteClipboardTool
 from core.tools.media_tools import MEDIA_TOOLS
@@ -15,6 +15,8 @@ ALL_TOOLS = [
     SystemInfoTool(),
     TimeTool(),
     SetSystemThemeTool(),
+    ProcessControlTool(),
+    PowerControlTool(),
     
     # App Control
     OpenAppTool(),
@@ -24,6 +26,8 @@ ALL_TOOLS = [
     ListDirectoryTool(),
     ReadFileTool(),
     SearchFilesTool(),
+    WriteFileTool(),
+    EditFileTool(),
     
     # Browser
     OpenURLTool(),

@@ -19,7 +19,7 @@ faster-whisper
 openwakeword
 sounddevice
 edge-tts>=6.1.0
-numpy>=1.26.0
+numpy>=1.26.0,<2.0.0
 
 # Desktop Automation
 pyautogui>=0.9.54
@@ -39,3 +39,4 @@ loguru>=0.7.0
 PyYAML>=6.0.1
 pygame>=2.6.0
 pygetwindow>=0.0.9
+onnxruntime

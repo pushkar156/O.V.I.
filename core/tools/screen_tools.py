@@ -12,7 +12,7 @@ class ScreenVisionTool:
     name = "analyze_screen_vision"
     description = "Captures the current screen and uses a vision model to describe what is happening."
     
-    def __init__(self, vision_model: str = "llama3.2-vision:11b"):
+    def __init__(self, vision_model: str = "moondream"):
         self.vision_model = vision_model
 
     def get_llm_definition(self):
