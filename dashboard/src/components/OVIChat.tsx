@@ -14,12 +14,40 @@ interface Message {
 
 export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (id: string) => void }> = ({ conversationId, onNewConversation }) => {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { id: '1', role: 'assistant', content: 'Systems online. How can I assist you, Commander?' }
+  ]);
   const [isRecording, setIsRecording] = useState(false);
   const [isWoken, setIsWoken] = useState(false);
   const [volume, setVolume] = useState(0);
-  const [currentConvId, setCurrentConvId] = useState<string | undefined>(conversationId);
+  const [currentConvId, setCurrentConvId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load last session on mount
+  useEffect(() => {
+    const savedId = localStorage.getItem('ovi_last_conv_id');
+    if (savedId) {
+      setCurrentConvId(savedId);
+      // Load history
+      oviClient.getChatHistory(savedId).then(history => {
+        if (history && history.length > 0) {
+          const formatted = history.map((h: any) => ({
+            id: h.id,
+            role: h.role,
+            content: h.content
+          }));
+          setMessages(formatted);
+        }
+      });
+    }
+  }, []);
+
+  // Save session when it changes
+  useEffect(() => {
+    if (currentConvId) {
+      localStorage.setItem('ovi_last_conv_id', currentConvId);
+    }
+  }, [currentConvId]);
 
   useEffect(() => {
     const handleMessage = (data: any) => {
@@ -41,7 +69,7 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
 
   // Sync internal ID with prop
   useEffect(() => {
-    setCurrentConvId(conversationId);
+    setCurrentConvId(conversationId || null);
   }, [conversationId]);
 
   // Load History when internal ID changes
@@ -115,7 +143,7 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
 
     try {
       // Use the internal currentConvId to ensure we stay in the same thread
-      const response = await oviClient.chat(input, currentConvId);
+      const response = await oviClient.chat(input, currentConvId || undefined);
 
       // Lock the ID immediately if this was a new conversation
       if (!currentConvId && response.conversation_id) {
@@ -153,28 +181,42 @@ export const OVIChat: React.FC<{ conversationId?: string, onNewConversation?: (i
   };
 
   return (
-    <section className="flex-1 h-full bg-surface-container-lowest dark:bg-[#1c1b1b] rounded-2xl border border-[#AF3E3E]/5 dark:border-[#5b403d]/15 flex flex-col relative overflow-hidden transition-colors duration-300">
-      <div className="absolute inset-0 opacity-10 dark:opacity-20 pointer-events-none transition-all duration-300 dark:bg-[radial-gradient(circle_at_50%_50%,_#ffb3ae_0%,_transparent_70%)]" style={{ backgroundImage: "radial-gradient(circle at 50% 50%, #CD5656 0%, transparent 70%)" }}></div>
+    <section className="flex-1 h-full bg-[#0a0a0b] rounded-3xl border border-white/5 flex flex-col relative overflow-hidden transition-all duration-700 ease-in-out">
+      {/* Background Sentinel Glow */}
+      <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${isRecording ? 'opacity-30' : isWoken ? 'opacity-20' : 'opacity-10'}`}>
+        <div className={`absolute top-[-20%] left-[-20%] w-[140%] h-[140%] rounded-full blur-[120px] transition-colors duration-1000 ${isRecording ? 'bg-[#00d4ff]' : 'bg-[#7000ff]'}`}></div>
+      </div>
 
-      <div className="flex-1 overflow-y-auto z-10 px-4 md:px-8 pt-8 pb-32 flex flex-col scrollbar-hide">
+      {/* Header with Title */}
+      <div className="z-30 px-8 py-4 glass-card border-t-0 border-x-0 rounded-none flex items-center justify-between electron-drag">
+        <div className="flex items-center gap-3">
+          <div className={`w-2 h-2 rounded-full ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-[#00d4ff] sentinel-glow'}`}></div>
+          <h2 className="text-xs font-bold tracking-[0.2em] uppercase text-white/40">
+            {isRecording ? "Neural Input Active" : "Sentinel Online"}
+          </h2>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto z-10 px-4 md:px-12 pt-8 pb-32 flex flex-col scrollbar-hide">
         {messages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center relative">
-            <div className="relative mb-8 flex items-center justify-center cursor-pointer" onClick={toggleRecording}>
+            <div className="relative mb-12 flex items-center justify-center cursor-pointer scale-125 transition-transform hover:scale-130" onClick={toggleRecording}>
+              <div className={`absolute inset-0 rounded-full blur-3xl transition-colors duration-500 ${isRecording ? 'bg-[#00d4ff]/30' : 'bg-[#7000ff]/20'}`}></div>
               <VoiceOrb 
                 state={isRecording ? "listening" : isWoken ? "speaking" : "idle"} 
               />
               {!isRecording && !isWoken && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-4xl text-[#CD5656] opacity-50">mic</span>
+                  <span className="material-symbols-outlined text-4xl text-white/30">mic_none</span>
                 </div>
               )}
             </div>
 
-            <h3 className="font-headline text-2xl md:text-3xl font-bold text-on-surface dark:text-[#e5e2e1] mb-2 z-10">
-              {isRecording ? "Listening..." : "How can I help you today?"}
+            <h3 className="font-bold text-3xl md:text-5xl tracking-tight text-white mb-4 z-10 sentinel-gradient-text">
+              {isRecording ? "Listening..." : "O.V.I. V2"}
             </h3>
-            <p className="font-label text-sm text-on-surface-variant dark:text-[#e5e2e1]/60 z-10">
-              {isRecording ? "Speak your directive clearly." : "System listening for operational directives..."}
+            <p className="text-sm tracking-[0.1em] uppercase text-white/40 z-10">
+              {isRecording ? "Neural Link Established" : "Standby for Directive"}
             </p>
           </div>
         ) : (

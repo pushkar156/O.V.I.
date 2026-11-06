@@ -129,9 +129,9 @@ Always there, never crashes   →    Native desktop sentinel (Electron)
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
-│                         O.V.I. ECOSYSTEM                          │
+│                         O.V.I. ECOSYSTEM                           │
 │                                                                    │
-│   ┌─────────────────────────────────────────────────────────┐     │
+│   ┌──────────────────────────────────────────────────────────┐     │
 │   │              ELECTRON NATIVE APP (The Face)              │     │
 │   │   ┌──────────────────────────────────────────────────┐   │     │
 │   │   │  Next.js Dashboard (Glassmorphism UI)            │   │     │
@@ -141,33 +141,33 @@ Always there, never crashes   →    Native desktop sentinel (Electron)
 │   │   └──────────────────────────────────────────────────┘   │     │
 │   │   [Ctrl+Space] Global Summon  |  Always-on-Top Overlay   │     │
 │   │   System Tray Integration     |  Boot-on-Startup         │     │
-│   └─────────────────────────────────────────────────────────┘     │
+│   └──────────────────────────────────────────────────────────┘     │
 │                            │                                       │
 │                     WebSocket + REST                               │
 │                            │                                       │
-│   ┌─────────────────────────────────────────────────────────┐     │
-│   │              PYTHON CORE SERVER (The Brain)              │     │
-│   │              FastAPI @ localhost:8000                     │     │
-│   │                                                          │     │
-│   │   ┌──────────────┐  ┌──────────────┐  ┌─────────────┐  │     │
-│   │   │  Ollama LLM  │  │  Tool Router │  │  Memory     │  │     │
-│   │   │  Qwen3 8B    │  │  Intent →    │  │  SQLite +   │  │     │
-│   │   │  :11434      │  │  Actions     │  │  ChromaDB   │  │     │
-│   │   └──────────────┘  └──────────────┘  └─────────────┘  │     │
-│   │                                                          │     │
-│   │   ┌──────────────┐  ┌──────────────┐  ┌─────────────┐  │     │
-│   │   │  Voice Stack │  │  Self-Heal   │  │  Persona    │  │     │
-│   │   │  Wake Word + │  │  Auto-retry  │  │  Warm AI    │  │     │
-│   │   │  STT + TTS   │  │  + Learning  │  │  Teammate   │  │     │
-│   │   └──────────────┘  └──────────────┘  └─────────────┘  │     │
-│   └─────────────────────────────────────────────────────────┘     │
+│   ┌─────────────────────────────────────────────────────────┐      │
+│   │              PYTHON CORE SERVER (The Brain)             │      │
+│   │              FastAPI @ localhost:8000                   │      │
+│   │                                                         │      │
+│   │   ┌──────────────┐  ┌──────────────┐  ┌─────────────┐   │      │
+│   │   │  Ollama LLM  │  │  Tool Router │  │  Memory     │   │      │
+│   │   │  Qwen3 8B    │  │  Intent →    │  │  SQLite +   │   │      │
+│   │   │  :11434      │  │  Actions     │  │  ChromaDB   │   │      │
+│   │   └──────────────┘  └──────────────┘  └─────────────┘   │      │
+│   │                                                         │      │
+│   │   ┌──────────────┐  ┌──────────────┐  ┌─────────────┐   │      │
+│   │   │  Voice Stack │  │  Self-Heal   │  │  Persona    │   │      │
+│   │   │  Wake Word + │  │  Auto-retry  │  │  Warm AI    │   │      │
+│   │   │  STT + TTS   │  │  + Learning  │  │  Teammate   │   │      │
+│   │   └──────────────┘  └──────────────┘  └─────────────┘   │      │
+│   └─────────────────────────────────────────────────────────┘      │
 │                            │                                       │
-│              ┌─────────────┼──────────────┐                       │
+│              ┌─────────────┼──────────────┐                        │
 │              ▼             ▼              ▼                        │
-│         PC Agent      Laptop Agent   Mobile Agent (V3)            │
-│         (Python)      (Python)       (React Native)               │
-│         Controls      Controls       Controls phone               │
-│         desktop       laptop         notifications                │
+│         PC Agent      Laptop Agent   Mobile Agent (V3)             │
+│         (Python)      (Python)       (React Native)                │
+│         Controls      Controls       Controls phone                │
+│         desktop       laptop         notifications                 │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -311,32 +311,37 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-### 3. Start the Core Server
+### 3. Master Ignition (One-Click)
 
-```bash
-# Make sure Ollama is running first
-ollama serve
+O.V.I. is designed for zero-friction operation. You don't need to manage multiple terminals.
 
-# Start O.V.I. Core
-uvicorn core.main:app --host 0.0.0.0 --port 8000 --reload
-```
+1.  **Pull the Model**:
+    ```bash
+    ollama pull qwen2.5:7b
+    ```
+2.  **Ignite**:
+    Right-click **`OVI.bat`** and select **"Run as Administrator"**.
 
-### 4. Start the Dashboard
+This single script will:
+- ✅ Verify Administrative privileges.
+- ✅ Auto-sync Python & Node dependencies (if changed).
+- ✅ Start Ollama (if not running).
+- ✅ Launch the O.V.I. Brain (Backend).
+- ✅ Launch the O.V.I. HUD (Dashboard).
+- ✅ Deploy the Desktop Sentinel (Electron).
 
-```bash
-cd dashboard
-npm install
-npm run dev
-```
+---
 
-### 5. Access O.V.I.
+## 💬 Native Desktop Experience
+O.V.I. lives in your system tray. Use **`Ctrl + O`** from anywhere to toggle her presence.
+
+---
 
 | Interface | URL |
 |:----------|:----|
 | **Dashboard** | `http://localhost:3000` |
-| **API** | `http://localhost:8000` |
-| **Health Check** | `http://localhost:8000/health` |
 | **API Docs** | `http://localhost:8000/docs` |
+| **Health** | `http://localhost:8000/health` |
 
 ---
 
@@ -375,6 +380,22 @@ npm run dev
 | Global hotkey summon | ❌ | ❌ | ❌ | ✅ |
 | No subscription | ❌ | ❌ | ✅ | ✅ |
 | Works offline | ❌ | ❌ | ✅ | ✅ |
+
+---
+
+## 🗺️ Roadmap (V3: "The Ecosystem")
+
+| Phase | Focus | Status |
+|:------|:------|:-------|
+| **V1** | **The Prototype** (Core Server, Voice Loop, LLM, Basic Tools) | ✅ Completed |
+| **V2** | **The Desktop Sentinel** (Electron HUD, Security Sandbox, Mesh Auth, MemorySentinel) | ✅ Completed |
+| **V3.1** | **Desktop UX Overhaul** (Modern UI, Window Layout Tool, Meeting Mode, Voice Fallback) | 🔄 Next Up |
+| **V3.2** | **Unified API & Backend** (Versioned `/api/v1/`, JWT Auth, Typed WebSockets, Telemetry) | 📋 Planned |
+| **V3.3** | **Website Dashboard** (Responsive remote Next.js HUD, Memory Explorer, System Monitor) | 📋 Planned |
+| **V3.4** | **Chrome Extension** (Manifest V3 Side Panel, Page Context Injection, Tab Management) | 📋 Planned |
+| **V3.5** | **Mobile Companion** (React Native / PWA, Push-to-Talk, Remote PC Commands, Alerts) | 📋 Planned |
+| **V3.6** | **Intelligence & Memory** (Cross-platform sync, Real-time Screen Vision, Dynamic Routines) | 📋 Planned |
+| **V3.7** | **Release & Showcase** (Installer `.exe`, GitHub cleanup, Chrome Store listing, Demo) | 📋 Planned |
 
 ---
 

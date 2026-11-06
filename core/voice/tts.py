@@ -10,6 +10,8 @@ class TTSProvider:
         self.output_dir = "data/audio"
         os.makedirs(self.output_dir, exist_ok=True)
         
+        self.busy = False
+        
         # Initialize pygame mixer for audio playback
         try:
             pygame.mixer.init()
@@ -24,6 +26,7 @@ class TTSProvider:
         output_file = os.path.join(self.output_dir, "response.mp3")
         
         try:
+            self.busy = True
             # 1. Generate Speech
             communicate = edge_tts.Communicate(text, self.voice)
             await communicate.save(output_file)
@@ -37,6 +40,8 @@ class TTSProvider:
             
         except Exception as e:
             logger.error(f"TTS Error: {e}")
+        finally:
+            self.busy = False
 
     async def synthesize(self, text: str) -> bytes:
         """

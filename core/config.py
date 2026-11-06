@@ -11,9 +11,12 @@ class Settings(BaseSettings):
 
     # LLM Configuration
     OLLAMA_URL: str = "http://127.0.0.1:11434"
-    DEFAULT_MODEL: str = "qwen2.5:1.5b"
+    DEFAULT_MODEL: str = "qwen2.5:7b"
+    OLLAMA_NUM_GPU: int = 99  # Offload all layers to GPU by default
+    OLLAMA_NUM_CTX: int = 8192  # Increased context window for complex tasks
+
     # Voice & Audio
-    FFMPEG_PATH: str = r"E:\ffmpeg-2026-05-11-git-17bc88e67f-full_build\bin"
+    FFMPEG_PATH: Optional[str] = None
     DEFAULT_VOICE: str = "en-US-AvaNeural"
 
     # Memory Configuration

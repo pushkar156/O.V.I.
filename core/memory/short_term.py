@@ -109,5 +109,17 @@ class ShortTermMemory:
                 logger.error(f"Failed to delete conversation: {e}")
                 await session.rollback()
 
+    async def get_latest_conversation_id(self) -> Optional[str]:
+        """Retrieves the ID of the most recently created conversation."""
+        async with AsyncSessionLocal() as session:
+            try:
+                stmt = select(Conversation).order_by(Conversation.created_at.desc()).limit(1)
+                result = await session.execute(stmt)
+                conv = result.scalar_one_or_none()
+                return conv.id if conv else None
+            except Exception as e:
+                logger.error(f"Failed to get latest conversation: {e}")
+                return None
+
 # Global instance
 memory_manager = ShortTermMemory()

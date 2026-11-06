@@ -13,7 +13,7 @@ class MemorySentinel:
     
     async def extract_facts(self, conversation_id: str):
         """
-        Analyzes the recent conversation history to extract facts about the user.
+        Background task to extract facts from the last message pair.
         """
         try:
             # 1. Get recent context
@@ -78,6 +78,37 @@ class MemorySentinel:
         except Exception as e:
             logger.error(f"Sentinel failed to get proactive context: {e}")
             return ""
+
+    async def generate_intelligent_title(self, conversation_id: str, user_msg: str, ai_msg: str):
+        """
+        Generates a 2-4 word title for the conversation based on the initial exchange.
+        """
+        try:
+            # Only rename if it's currently a snippet or 'New Chat'
+            conversations = await memory_manager.get_conversations()
+            current_conv = next((c for c in conversations if c['id'] == conversation_id), None)
+            
+            # If the title is longer than 30 chars or doesn't look like a snippet, skip
+            if current_conv and len(current_conv['title']) < 30 and "..." not in current_conv['title']:
+                logger.info(f"Skipping auto-rename for {conversation_id}: Title '{current_conv['title']}' seems intentional.")
+                return
+
+            prompt = f"""
+            Task: Generate a brief (2-4 words) title for this conversation.
+            User: {user_msg}
+            AI: {ai_msg}
+            
+            Return ONLY the title. No quotes, no preamble.
+            """
+            
+            title = await ollama_client.generate(prompt, system="You are O.V.I.'s librarian.")
+            title = title.strip().replace('"', '').replace('.', '')
+            
+            # Update the session title in the short-term memory
+            await memory_manager.update_conversation_title(conversation_id, title)
+            logger.info(f"Sentinel named conversation {conversation_id} as: '{title}'")
+        except Exception as e:
+            logger.error(f"Sentinel naming failed: {e}")
 
 # Global instance
 sentinel = MemorySentinel()

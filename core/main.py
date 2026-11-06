@@ -55,17 +55,24 @@ async def lifespan(app: FastAPI):
     
             async def handle_wake():
                 logger.info("Handling Wake Word trigger...")
-                # 1. Notify Dashboard for visual feedback
-                await manager.broadcast({
-                    "type": "wake",
-                    "status": "active",
-                    "timestamp": time.time()
-                })
+                # 1. Disable listener while speaking
+                wake_listener.ignore_audio = True
                 
-                # 2. Voice Response
-                await tts_provider.speak("I am here. How can I assist?")
-                
-                logger.success("O.V.I. is now listening.")
+                try:
+                    # 2. Notify Dashboard for visual feedback
+                    await manager.broadcast({
+                        "type": "wake",
+                        "status": "active",
+                        "timestamp": time.time()
+                    })
+                    
+                    # 3. Voice Response
+                    await tts_provider.speak("I am here. How can I assist?")
+                    
+                    logger.success("O.V.I. is now listening.")
+                finally:
+                    # 4. Re-enable listener
+                    wake_listener.ignore_audio = False
     
             asyncio.create_task(wake_listener.start(on_wake=handle_wake))
         except Exception as e:

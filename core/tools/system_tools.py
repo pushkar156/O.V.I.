@@ -99,3 +99,82 @@ class SetSystemThemeTool(BaseTool):
             return ToolResult(success=True, message=f"System theme set to {theme}.")
         except Exception as e:
             return ToolResult(success=False, message=f"Failed to set theme: {e}")
+
+class ProcessControlTool(BaseTool):
+    @property
+    def name(self) -> str:
+        return "manage_processes"
+
+    @property
+    def description(self) -> str:
+        return "Lists running processes or terminates a specific process by name or PID."
+
+    @property
+    def parameters(self) -> Dict[str, Any]:
+        return {
+            "type": "object",
+            "properties": {
+                "action": {"type": "string", "enum": ["list", "kill"], "description": "Whether to list all processes or kill one."},
+                "target": {"type": "string", "description": "The name or PID of the process to kill (if action is 'kill')."}
+            },
+            "required": ["action"]
+        }
+
+    async def execute(self, action: str, target: str = None, **kwargs) -> ToolResult:
+        try:
+            if action == "list":
+                processes = []
+                for proc in psutil.process_iter(['pid', 'name', 'cpu_percent']):
+                    processes.append(proc.info)
+                # Sort by CPU and take top 10
+                top_procs = sorted(processes, key=lambda x: x['cpu_percent'] or 0, reverse=True)[:10]
+                return ToolResult(success=True, data={"top_processes": top_procs}, message="Top 10 CPU processes retrieved.")
+            
+            elif action == "kill" and target:
+                count = 0
+                for proc in psutil.process_iter(['pid', 'name']):
+                    if target.lower() in proc.info['name'].lower() or str(proc.info['pid']) == target:
+                        proc.kill()
+                        count += 1
+                return ToolResult(success=True, message=f"Terminated {count} process(es) matching '{target}'.")
+            
+            return ToolResult(success=False, message="Invalid action or target missing.")
+        except Exception as e:
+            return ToolResult(success=False, message=str(e))
+
+class PowerControlTool(BaseTool):
+    @property
+    def name(self) -> str:
+        return "system_power_control"
+
+    @property
+    def description(self) -> str:
+        return "Executes power commands like shutdown, restart, or sleep. USE WITH EXTREME CAUTION."
+
+    @property
+    def parameters(self) -> Dict[str, Any]:
+        return {
+            "type": "object",
+            "properties": {
+                "command": {"type": "string", "enum": ["shutdown", "restart", "sleep"], "description": "The power command to execute."}
+            },
+            "required": ["command"]
+        }
+
+    async def execute(self, command: str, **kwargs) -> ToolResult:
+        try:
+            import os
+            if command == "shutdown":
+                os.system("shutdown /s /t 60") # 60 sec delay for safety
+                return ToolResult(success=True, message="System will shutdown in 60 seconds. You can cancel with 'shutdown /a' in CMD.")
+            elif command == "restart":
+                os.system("shutdown /r /t 60")
+                return ToolResult(success=True, message="System will restart in 60 seconds.")
+            elif command == "sleep":
+                # Requires 'Powertool' or just the rundll32 command
+                os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
+                return ToolResult(success=True, message="System is going to sleep.")
+            
+            return ToolResult(success=False, message="Invalid command.")
+        except Exception as e:
+            return ToolResult(success=False, message=str(e))
