@@ -5,6 +5,7 @@ from core.tools.browser_tools import OpenURLTool, WebSearchTool
 from core.tools.clipboard_tools import ReadClipboardTool, WriteClipboardTool
 from core.tools.media_tools import MEDIA_TOOLS
 from core.tools.screen_tools import ScreenVisionTool
+from core.tools.window_organizer import WindowLayoutTool
 from core.tools.code_tools import CODE_TOOLS
 from core.tools.web_search import advanced_search_tool
 from core.tools.cross_device import CROSS_DEVICE_TOOLS
@@ -41,8 +42,9 @@ ALL_TOOLS = [
     # Media
     *MEDIA_TOOLS,
     
-    # Vision
+    # Vision & Desktop
     ScreenVisionTool(),
+    WindowLayoutTool(),
     
     # Developer
     *CODE_TOOLS,

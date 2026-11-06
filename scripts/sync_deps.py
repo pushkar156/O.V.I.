@@ -47,8 +47,8 @@ def sync_node():
         print("      Root node_modules missing. Installing...")
         subprocess.check_call(['npm', 'install', '--quiet'], shell=True)
     
-    # Dashboard
-    dash_dir = 'dashboard'
+    # Dashboard / Web
+    dash_dir = os.path.join('apps', 'web') if os.path.exists(os.path.join('apps', 'web')) else 'dashboard'
     if os.path.exists(dash_dir) and not os.path.exists(os.path.join(dash_dir, 'node_modules')):
         print("      Dashboard node_modules missing. Installing...")
         subprocess.check_call(['npm', 'install', '--quiet'], cwd=dash_dir, shell=True)

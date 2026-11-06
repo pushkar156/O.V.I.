@@ -41,7 +41,7 @@ function startDashboard() {
   if (!isDev) return;
   
   console.log('Starting Dashboard (Next.js)...');
-  const dashboardPath = path.join(__dirname, 'dashboard');
+  const dashboardPath = path.join(__dirname, 'apps', 'web');
   
   // Use npm.cmd on Windows
   const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';

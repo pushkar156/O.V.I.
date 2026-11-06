@@ -99,4 +99,42 @@ class MediaPlaybackTool:
         except Exception as e:
             return f"Error: {e}"
 
-MEDIA_TOOLS = [SetVolumeTool(), ToggleMuteTool(), MediaPlaybackTool()]
+class MeetingModeTool(BaseMediaTool):
+    name = "meeting_mode"
+    description = "Prepares the desktop for a meeting by muting system media and minimizing background distraction windows."
+    
+    def get_llm_definition(self):
+        return {
+            "name": self.name,
+            "description": self.description,
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {
+                        "type": "string",
+                        "enum": ["enter", "exit"],
+                        "description": "Whether to enter or exit meeting mode."
+                    }
+                },
+                "required": ["action"]
+            }
+        }
+    
+    def execute(self, action: str = "enter", **kwargs) -> str:
+        try:
+            volume = self._get_volume_interface()
+            if action == "enter":
+                if volume:
+                    volume.SetMute(True, None)
+                from core.tools.window_organizer import organize_windows
+                organize_windows("minimize_all")
+                return "Meeting mode activated: System audio muted and background windows minimized."
+            else:
+                if volume:
+                    volume.SetMute(False, None)
+                return "Meeting mode deactivated: System audio unmuted."
+        except Exception as e:
+            logger.error(f"Meeting mode error: {e}")
+            return f"Error executing meeting mode: {e}"
+
+MEDIA_TOOLS = [SetVolumeTool(), ToggleMuteTool(), MediaPlaybackTool(), MeetingModeTool()]

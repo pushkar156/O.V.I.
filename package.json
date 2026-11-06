@@ -4,7 +4,7 @@
   "main": "electron-main.js",
   "scripts": {
     "dev": "npm run dashboard:dev",
-    "dashboard:dev": "cd dashboard && npm run dev",
+    "dashboard:dev": "cd apps/web && npm run dev",
     "electron": "electron .",
     "ignite": "npm run electron"
   },
