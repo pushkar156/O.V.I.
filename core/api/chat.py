@@ -43,9 +43,9 @@ async def chat_endpoint(request: ChatRequest):
     # For now, we'll stick to a stricter check: if not provided, generate ONE and keep it.
     conv_id = request.conversation_id
     if not conv_id:
-        # Check if we have an 'active' session in memory we can reuse? 
-        # For simplicity, we'll let the frontend handle the 'stickiness' better.
-        conv_id = str(uuid.uuid4())
+        # Try to find the most recent active session to keep the conversation fluid
+        latest_id = await memory_manager.get_latest_conversation_id()
+        conv_id = latest_id if latest_id else str(uuid.uuid4())
     
     # 1. Prepare context and instructions
     context = request.context or {}
@@ -132,6 +132,11 @@ async def chat_endpoint(request: ChatRequest):
         # 8. Intelligent Fact Extraction (3.1) - Background task
         import asyncio
         asyncio.create_task(sentinel.extract_facts(conv_id))
+        
+        # Auto-name if it's the first few messages
+        history = await memory_manager.get_history(conv_id)
+        if len(history) <= 2: # User message + AI response
+            asyncio.create_task(sentinel.generate_intelligent_title(conv_id, request.message, content))
 
         return ChatResponse(
             response=content,

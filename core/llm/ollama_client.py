@@ -60,7 +60,11 @@ class OllamaClient:
             response = await self.client.generate(
                 model=self.model,
                 prompt=prompt,
-                system=system
+                system=system,
+                options={
+                    "num_gpu": settings.OLLAMA_NUM_GPU,
+                    "num_ctx": settings.OLLAMA_NUM_CTX
+                }
             )
             return response['response']
         except Exception as e:
@@ -73,6 +77,10 @@ class OllamaClient:
             response = await self.client.chat(
                 model=self.model,
                 messages=messages,
+                options={
+                    "num_gpu": settings.OLLAMA_NUM_GPU,
+                    "num_ctx": settings.OLLAMA_NUM_CTX
+                }
             )
             return response['message']
         except Exception as e:
@@ -86,6 +94,10 @@ class OllamaClient:
                 model=self.model,
                 messages=messages,
                 stream=True,
+                options={
+                    "num_gpu": settings.OLLAMA_NUM_GPU,
+                    "num_ctx": settings.OLLAMA_NUM_CTX
+                }
             )
             async for chunk in stream:
                 if 'message' in chunk and 'content' in chunk['message']:

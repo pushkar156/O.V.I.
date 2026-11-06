@@ -6,11 +6,22 @@ const { spawn } = require('child_process');
 let mainWindow;
 let tray;
 let isQuitting = false;
-let pythonProcess = null;
+let dashboardProcess = null;
+
+function ensureOllama() {
+  const { exec } = require('child_process');
+  exec('tasklist /FI "IMAGENAME eq ollama.exe"', (err, stdout) => {
+    if (!stdout.includes('ollama.exe')) {
+      console.log('Ollama not detected. Starting Ollama...');
+      spawn('ollama', ['serve'], { detached: true, stdio: 'ignore' }).unref();
+    } else {
+      console.log('Ollama is already running.');
+    }
+  });
+}
 
 function startBackend() {
   const pythonPath = path.join(__dirname, 'venv', 'Scripts', 'python.exe');
-  
   console.log('Starting Python backend...');
   
   pythonProcess = spawn(pythonPath, ['-m', 'core.main'], {
@@ -18,21 +29,30 @@ function startBackend() {
     env: { 
       ...process.env, 
       PYTHONUNBUFFERED: '1',
-      PYTHONPATH: __dirname // Ensure root is in path
+      PYTHONPATH: __dirname
     }
   });
 
-  pythonProcess.stdout.on('data', (data) => {
-    console.log(`[Backend]: ${data}`);
+  pythonProcess.stdout.on('data', (data) => console.log(`[Backend]: ${data}`));
+  pythonProcess.stderr.on('data', (data) => console.error(`[Backend Error]: ${data}`));
+}
+
+function startDashboard() {
+  if (!isDev) return;
+  
+  console.log('Starting Dashboard (Next.js)...');
+  const dashboardPath = path.join(__dirname, 'dashboard');
+  
+  // Use npm.cmd on Windows
+  const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  
+  dashboardProcess = spawn(npmCmd, ['run', 'dev'], {
+    cwd: dashboardPath,
+    shell: true
   });
 
-  pythonProcess.stderr.on('data', (data) => {
-    console.error(`[Backend Error]: ${data}`);
-  });
-
-  pythonProcess.on('close', (code) => {
-    console.log(`Backend process exited with code ${code}`);
-  });
+  dashboardProcess.stdout.on('data', (data) => console.log(`[Dashboard]: ${data}`));
+  dashboardProcess.stderr.on('data', (data) => console.error(`[Dashboard Error]: ${data}`));
 }
 
 function createWindow() {
@@ -133,7 +153,9 @@ function registerHotkeys() {
 }
 
 app.on('ready', () => {
+  ensureOllama();
   startBackend();
+  startDashboard();
   createWindow();
   createTray();
   registerHotkeys();
@@ -161,6 +183,10 @@ app.on('will-quit', () => {
   if (pythonProcess) {
     console.log('Stopping Python backend...');
     pythonProcess.kill();
+  }
+  if (dashboardProcess) {
+    console.log('Stopping Dashboard...');
+    dashboardProcess.kill();
   }
 });
 

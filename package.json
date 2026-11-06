@@ -3,10 +3,10 @@
   "version": "2.0.0",
   "main": "electron-main.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "electron": "electron ."
+    "dev": "npm run dashboard:dev",
+    "dashboard:dev": "cd dashboard && npm run dev",
+    "electron": "electron .",
+    "ignite": "npm run electron"
   },
   "dependencies": {
     "next-themes": "^0.4.6"

@@ -15,17 +15,31 @@ class WakeWordListener:
         self.model_name = model_name
         self.sensitivity = sensitivity
         self.running = False
+        self.ignore_audio = False
         self.on_wake_callback = None
         self.loop = None
         
-        # Load the pre-trained model
-        self.model = Model(wakeword_models=[self.model_name])
-        logger.info(f"Wake Word Listener Initialized (Model: {self.model_name})")
+        # Ensure models are downloaded (required for ONNX versions)
+        import openwakeword.utils
+        openwakeword.utils.download_models()
+        
+        # Load the pre-trained model with ONNX framework explicitly for Windows
+        self.model = Model(
+            wakeword_models=[self.model_name],
+            inference_framework="onnx"
+        )
+        logger.info(f"Wake Word Listener Initialized (Model: {self.model_name}, Framework: ONNX)")
 
     def _audio_callback(self, indata, frames, time, status):
         """Callback for sounddevice to process incoming audio chunks."""
         if status:
+            if "overflow" in str(status).lower():
+                # Silently skip overflow chunks to keep the stream alive
+                return
             logger.warning(f"Microphone Status Error: {status}")
+            
+        if self.ignore_audio:
+            return
             
         # Convert float32 to int16 PCM
         audio_int16 = (indata[:, 0] * 32767).astype(np.int16)
@@ -54,9 +68,10 @@ class WakeWordListener:
         try:
             # Required format: 16000 Hz, mono
             # OpenWakeWord works best with chunks of 1280 samples (80ms)
-            with sd.InputStream(samplerate=16000, channels=1, callback=self._audio_callback, blocksize=1280):
+            # Use low latency to avoid overflows on slower hardware
+            with sd.InputStream(samplerate=16000, channels=1, callback=self._audio_callback, blocksize=1280, latency='low'):
                 while self.running:
-                    await asyncio.sleep(0.1)
+                    await asyncio.sleep(0.5) # Longer sleep is fine, callback is async-safe
         except Exception as e:
             logger.error(f"Wake word listener failed: {e}")
             self.running = False

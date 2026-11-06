@@ -12,7 +12,11 @@ APP_REGISTRY = {
     "spotify": "spotify.exe",
     "calculator": "calc.exe",
     "explorer": "explorer.exe",
-    "terminal": "wt.exe" # Windows Terminal
+    "terminal": "wt.exe", # Windows Terminal
+    "edge": "msedge.exe",
+    "slack": "slack.exe",
+    "discord": "discord.exe",
+    "taskmgr": "taskmgr.exe"
 }
 
 class OpenAppTool(BaseTool):
